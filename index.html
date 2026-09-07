@@ -58,20 +58,19 @@
             border-radius: 9999px;
             border: 1px solid #334155;
         }
-        .privacy-toggle {
-            background: transparent;
+        select option { background: #0f172a; color: #e2e8f0; }
+        .date-format-select {
+            background: #0f172a;
+            color: #e2e8f0;
             border: 1px solid #1e293b;
-            color: #64748b;
-            font-size: 9px;
-            padding: 2px 10px;
-            border-radius: 9999px;
-            transition: all 0.15s;
+            border-radius: 6px;
+            padding: 2px 6px;
+            font-size: 10px;
             cursor: pointer;
+            outline: none;
         }
-        .privacy-toggle:hover {
-            background: #1e293b;
-            color: #94a3b8;
-            border-color: #334155;
+        .date-format-select:focus {
+            border-color: #6366f1;
         }
     </style>
 </head>
@@ -238,21 +237,31 @@
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="text-[10px] text-slate-400 block mb-1">Date (DD.MM.YYYY)</label>
-                                <input type="text" id="tagDate" oninput="updatePost()" placeholder="DD.MM.YYYY" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="text-[10px] text-slate-400">Date</label>
+                                    <select id="dateFormat" onchange="formatDate()" class="date-format-select">
+                                        <option value="DD.MM.YYYY">DD.MM.YYYY</option>
+                                        <option value="MM.DD.YYYY">MM.DD.YYYY</option>
+                                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                        <option value="YYYY/MM/DD">YYYY/MM/DD</option>
+                                    </select>
+                                </div>
+                                <input type="text" id="tagDate" oninput="updatePost()" placeholder="DD.MM.YYYY" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white text-xs">
                             </div>
                             <div>
                                 <label class="text-[10px] text-slate-400 block mb-1">Top Handle</label>
-                                <input type="text" id="tagHandle" oninput="updatePostAndSave()" placeholder="@username" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
+                                <input type="text" id="tagHandle" oninput="updatePostAndSave()" placeholder="@username" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white text-xs">
                             </div>
                         </div>
                     </div>
                     <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
                         <span class="font-semibold text-slate-300 block">Bottom Signature</span>
-                        <input type="text" id="footerText" oninput="updatePostAndSave()" placeholder="@username // your-website.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
+                        <input type="text" id="footerText" oninput="updatePostAndSave()" placeholder="@username // your-website.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white text-xs">
                     </div>
                     
-                    <!-- Privacy section - clean, organized, and informative -->
+                    <!-- Privacy section -->
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/60 text-xs space-y-3">
                         <div class="flex items-center gap-2 text-slate-300 font-semibold">
                             <span>🔒</span> Privacy & Data
@@ -296,18 +305,87 @@
                 accentColor: "#2563eb",
                 tagDate: "",
                 tagHandle: "",
-                footerText: ""
+                footerText: "",
+                dateFormat: "DD.MM.YYYY"
             };
 
             const canvas = document.getElementById('postCanvas');
             const ctx = canvas.getContext('2d');
+
+            // ============ DATE FORMAT HELPERS ============
+            function getTodayDate(format) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                
+                const formats = {
+                    'DD.MM.YYYY': `${day}.${month}.${year}`,
+                    'MM.DD.YYYY': `${month}.${day}.${year}`,
+                    'YYYY-MM-DD': `${year}-${month}-${day}`,
+                    'DD/MM/YYYY': `${day}/${month}/${year}`,
+                    'MM/DD/YYYY': `${month}/${day}/${year}`,
+                    'YYYY/MM/DD': `${year}/${month}/${day}`
+                };
+                return formats[format] || formats['DD.MM.YYYY'];
+            }
+
+            window.formatDate = function() {
+                const format = document.getElementById('dateFormat').value;
+                const dateInput = document.getElementById('tagDate');
+                const currentDate = dateInput.value;
+                
+                // If the field is empty or contains a date, reformat it
+                if (currentDate === '') {
+                    // If empty, just set to today's date in the new format
+                    dateInput.value = getTodayDate(format);
+                } else {
+                    // Try to parse the current date and reformat it
+                    const parsed = parseDate(currentDate);
+                    if (parsed) {
+                        const year = parsed.getFullYear();
+                        const month = String(parsed.getMonth() + 1).padStart(2, '0');
+                        const day = String(parsed.getDate()).padStart(2, '0');
+                        
+                        const formats = {
+                            'DD.MM.YYYY': `${day}.${month}.${year}`,
+                            'MM.DD.YYYY': `${month}.${day}.${year}`,
+                            'YYYY-MM-DD': `${year}-${month}-${day}`,
+                            'DD/MM/YYYY': `${day}/${month}/${year}`,
+                            'MM/DD/YYYY': `${month}/${day}/${year}`,
+                            'YYYY/MM/DD': `${year}/${month}/${day}`
+                        };
+                        dateInput.value = formats[format] || formats['DD.MM.YYYY'];
+                    } else {
+                        // If parsing fails, set to today's date
+                        dateInput.value = getTodayDate(format);
+                    }
+                }
+                updatePost();
+            };
+
+            function parseDate(str) {
+                // Try common formats
+                let parts;
+                // DD.MM.YYYY or DD/MM/YYYY
+                parts = str.match(/^(\d{2})[.\/](\d{2})[.\/](\d{4})$/);
+                if (parts) return new Date(parts[3], parts[2] - 1, parts[1]);
+                // MM.DD.YYYY or MM/DD/YYYY
+                parts = str.match(/^(\d{2})[.\/](\d{2})[.\/](\d{4})$/);
+                if (parts) return new Date(parts[3], parts[1] - 1, parts[2]);
+                // YYYY-MM-DD or YYYY/MM/DD
+                parts = str.match(/^(\d{4})[-/](\d{2})[-/](\d{2})$/);
+                if (parts) return new Date(parts[1], parts[2] - 1, parts[3]);
+                return null;
+            }
 
             // ============ LOCAL STORAGE HELPERS ============
             function saveToStorage() {
                 try {
                     const data = {
                         tagHandle: document.getElementById('tagHandle').value,
-                        footerText: document.getElementById('footerText').value
+                        footerText: document.getElementById('footerText').value,
+                        dateFormat: document.getElementById('dateFormat').value
                     };
                     localStorage.setItem('omnipost_user_data', JSON.stringify(data));
                     document.getElementById('storageStatus').textContent = '💾 saved';
@@ -321,6 +399,28 @@
                     const data = JSON.parse(raw);
                     if (data.tagHandle) document.getElementById('tagHandle').value = data.tagHandle;
                     if (data.footerText) document.getElementById('footerText').value = data.footerText;
+                    if (data.dateFormat) {
+                        document.getElementById('dateFormat').value = data.dateFormat;
+                        // Update date to match the saved format
+                        const dateInput = document.getElementById('tagDate');
+                        if (dateInput.value) {
+                            const parsed = parseDate(dateInput.value);
+                            if (parsed) {
+                                const year = parsed.getFullYear();
+                                const month = String(parsed.getMonth() + 1).padStart(2, '0');
+                                const day = String(parsed.getDate()).padStart(2, '0');
+                                const formats = {
+                                    'DD.MM.YYYY': `${day}.${month}.${year}`,
+                                    'MM.DD.YYYY': `${month}.${day}.${year}`,
+                                    'YYYY-MM-DD': `${year}-${month}-${day}`,
+                                    'DD/MM/YYYY': `${day}/${month}/${year}`,
+                                    'MM/DD/YYYY': `${month}/${day}/${year}`,
+                                    'YYYY/MM/DD': `${year}/${month}/${day}`
+                                };
+                                dateInput.value = formats[data.dateFormat] || formats['DD.MM.YYYY'];
+                            }
+                        }
+                    }
                     document.getElementById('storageStatus').textContent = '💾 loaded';
                 } catch (e) { /* ignore */ }
             }
@@ -329,6 +429,8 @@
                 localStorage.removeItem('omnipost_user_data');
                 document.getElementById('tagHandle').value = '';
                 document.getElementById('footerText').value = '';
+                document.getElementById('tagDate').value = '';
+                document.getElementById('dateFormat').value = 'DD.MM.YYYY';
                 document.getElementById('storageStatus').textContent = '🗑️ cleared';
                 updatePost();
                 showToast('🧹 All saved data cleared from your browser (localStorage)');
@@ -514,6 +616,7 @@
                 state.tagDate = document.getElementById('tagDate').value;
                 state.tagHandle = document.getElementById('tagHandle').value;
                 state.footerText = document.getElementById('footerText').value;
+                state.dateFormat = document.getElementById('dateFormat').value;
 
                 const w = 1080, h = 1920;
                 canvas.width = w; canvas.height = h;
@@ -599,16 +702,13 @@
                 ctx.restore();
             };
 
-            // ============ LIVE DATE/TIME (sync only date) ============
+            // ============ LIVE DATE/TIME ============
             window.loadLiveDateTime = function() {
-                const now = new Date();
-                const year = now.getFullYear();
-                const dd = String(now.getDate()).padStart(2, '0');
-                const mm = String(now.getMonth() + 1).padStart(2, '0');
-                const formattedDate = `${dd}.${mm}.${year}`;
-
+                const format = document.getElementById('dateFormat').value;
+                const formattedDate = getTodayDate(format);
                 document.getElementById('tagDate').value = formattedDate;
                 updatePost();
+                saveToStorage();
                 showToast('📅 Date synced with today!');
             };
 
@@ -631,18 +731,13 @@
             window.exportImage = function() {
                 updatePost();
                 
-                // Generate default name with timestamp
                 const now = new Date();
                 const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
                 const defaultName = `omnipost-${dateStr}`;
                 
-                // Ask user for file name
                 const fileName = prompt('Enter a name for your image:', defaultName);
-                
-                // If user cancels (null) or enters empty string, use default
                 const finalName = (fileName && fileName.trim() !== '') ? fileName.trim() : defaultName;
                 
-                // Download the image
                 const link = document.createElement('a');
                 link.download = `${finalName}.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
@@ -653,12 +748,17 @@
 
             // ============ INIT ============
             window.addEventListener('DOMContentLoaded', () => {
-                loadFromStorage();  // Restore handle + footer
+                loadFromStorage();
+                // If date is empty, set it to today
+                const dateInput = document.getElementById('tagDate');
+                if (!dateInput.value) {
+                    const format = document.getElementById('dateFormat').value;
+                    dateInput.value = getTodayDate(format);
+                }
                 updatePost();
-                // save on any change (also triggered by updatePostAndSave)
-                // but we attach listeners to the fields directly
                 document.getElementById('tagHandle').addEventListener('input', saveToStorage);
                 document.getElementById('footerText').addEventListener('input', saveToStorage);
+                document.getElementById('dateFormat').addEventListener('change', saveToStorage);
             });
 
         })();
