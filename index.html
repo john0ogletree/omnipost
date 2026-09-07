@@ -50,15 +50,42 @@
             0% { opacity: 0; transform: translate(-50%, 20px); }
             100% { opacity: 1; transform: translate(-50%, 0); }
         }
+        .storage-badge {
+            background: #1e293b;
+            color: #94a3b8;
+            font-size: 9px;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            border: 1px solid #334155;
+        }
+        .privacy-toggle {
+            background: transparent;
+            border: 1px solid #1e293b;
+            color: #64748b;
+            font-size: 9px;
+            padding: 2px 10px;
+            border-radius: 9999px;
+            transition: all 0.15s;
+            cursor: pointer;
+        }
+        .privacy-toggle:hover {
+            background: #1e293b;
+            color: #94a3b8;
+            border-color: #334155;
+        }
     </style>
 </head>
 <body class="h-full font-sans antialiased flex flex-col overflow-hidden select-none">
 
-    <!-- Top Navigation -->
-    <header class="h-14 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md px-4 flex items-center justify-end z-30 shrink-0">
+    <!-- Top Navigation - clean & minimal -->
+    <header class="h-12 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md px-4 flex items-center justify-between z-30 shrink-0">
+        <div class="flex items-center gap-3">
+            <span class="text-sm font-semibold text-slate-300 tracking-tight">OmniPost</span>
+            <span class="storage-badge" id="storageStatus">💾 auto-save</span>
+        </div>
         <button onclick="exportImage()" class="bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-indigo-600/30 transition-all">
             <span class="text-base leading-none">⬇</span>
-            <span>Export 9:16</span>
+            <span>Export</span>
         </button>
     </header>
 
@@ -193,16 +220,21 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: META (simplified: only Date & Handle) -->
+                <!-- TAB 3: META -->
                 <div id="tab-meta" class="tab-content space-y-3 hidden">
                     <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
                         <div class="flex items-center justify-between">
                             <span class="font-semibold text-indigo-400 flex items-center gap-1.5">
                                 <span class="text-base">⚡</span> Header Controls
                             </span>
-                            <button onclick="loadLiveDateTime()" class="text-[10px] bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/30 px-2.5 py-1 rounded-md font-medium transition-colors">
-                                Sync Date
-                            </button>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="loadLiveDateTime()" class="text-[10px] bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/30 px-2.5 py-1 rounded-md font-medium transition-colors">
+                                    Sync Date
+                                </button>
+                                <button onclick="clearStoredData()" class="text-[10px] bg-red-500/10 text-red-300 hover:bg-red-500/20 px-2.5 py-1 rounded-md font-medium transition-colors border border-red-500/20 hover:border-red-500/40">
+                                    🗑️ Clear Saved
+                                </button>
+                            </div>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
@@ -211,13 +243,43 @@
                             </div>
                             <div>
                                 <label class="text-[10px] text-slate-400 block mb-1">Top Handle</label>
-                                <input type="text" id="tagHandle" oninput="updatePost()" placeholder="@username" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
+                                <input type="text" id="tagHandle" oninput="updatePostAndSave()" placeholder="@username" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
                             </div>
                         </div>
                     </div>
                     <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
                         <span class="font-semibold text-slate-300 block">Bottom Signature</span>
-                        <input type="text" id="footerText" oninput="updatePost()" placeholder="@username // your-website.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
+                        <input type="text" id="footerText" oninput="updatePostAndSave()" placeholder="@username // your-website.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white">
+                    </div>
+                    
+                    <!-- Privacy section - clean, organized, and informative -->
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/60 text-xs space-y-3">
+                        <div class="flex items-center gap-2 text-slate-300 font-semibold">
+                            <span>🔒</span> Privacy & Data
+                            <span class="ml-auto text-[9px] font-normal text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">100% local</span>
+                        </div>
+                        <div class="space-y-2 text-slate-400 leading-relaxed">
+                            <div class="flex items-start gap-2.5">
+                                <span class="text-emerald-400 text-[10px] mt-0.5">◆</span>
+                                <div><span class="text-slate-200">All data stays in your browser</span> — nothing is ever sent to any server.</div>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <span class="text-emerald-400 text-[10px] mt-0.5">◆</span>
+                                <div>Stored in <code class="bg-slate-800 px-1.5 py-0.5 rounded text-[9px] text-indigo-300">localStorage</code> on your device. No tracking, no cookies, no analytics.</div>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <span class="text-emerald-400 text-[10px] mt-0.5">◆</span>
+                                <div>Clear all saved data anytime with the <span class="text-red-300">"Clear Saved"</span> button above.</div>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <span class="text-emerald-400 text-[10px] mt-0.5">◆</span>
+                                <div>No account, no email, no sign-up required. Just open and create.</div>
+                            </div>
+                            <div class="text-[9px] text-slate-500 border-t border-slate-800/50 pt-2 mt-1 flex items-center gap-2">
+                                <span>📌</span>
+                                <span>External resource: Tailwind CSS CDN (styling only — no data sent).</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -239,6 +301,44 @@
 
             const canvas = document.getElementById('postCanvas');
             const ctx = canvas.getContext('2d');
+
+            // ============ LOCAL STORAGE HELPERS ============
+            function saveToStorage() {
+                try {
+                    const data = {
+                        tagHandle: document.getElementById('tagHandle').value,
+                        footerText: document.getElementById('footerText').value
+                    };
+                    localStorage.setItem('omnipost_user_data', JSON.stringify(data));
+                    document.getElementById('storageStatus').textContent = '💾 saved';
+                } catch (e) { /* ignore */ }
+            }
+
+            function loadFromStorage() {
+                try {
+                    const raw = localStorage.getItem('omnipost_user_data');
+                    if (!raw) return;
+                    const data = JSON.parse(raw);
+                    if (data.tagHandle) document.getElementById('tagHandle').value = data.tagHandle;
+                    if (data.footerText) document.getElementById('footerText').value = data.footerText;
+                    document.getElementById('storageStatus').textContent = '💾 loaded';
+                } catch (e) { /* ignore */ }
+            }
+
+            window.clearStoredData = function() {
+                localStorage.removeItem('omnipost_user_data');
+                document.getElementById('tagHandle').value = '';
+                document.getElementById('footerText').value = '';
+                document.getElementById('storageStatus').textContent = '🗑️ cleared';
+                updatePost();
+                showToast('🧹 All saved data cleared from your browser (localStorage)');
+            };
+
+            // ============ WRAPPER FOR UPDATE + SAVE ============
+            window.updatePostAndSave = function() {
+                updatePost();
+                saveToStorage();
+            };
 
             // ============ TEMPLATE SYSTEM ============
             const templates = {
@@ -553,8 +653,14 @@
 
             // ============ INIT ============
             window.addEventListener('DOMContentLoaded', () => {
+                loadFromStorage();  // Restore handle + footer
                 updatePost();
+                // save on any change (also triggered by updatePostAndSave)
+                // but we attach listeners to the fields directly
+                document.getElementById('tagHandle').addEventListener('input', saveToStorage);
+                document.getElementById('footerText').addEventListener('input', saveToStorage);
             });
+
         })();
     </script>
 </body>
