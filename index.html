@@ -76,7 +76,7 @@
 </head>
 <body class="h-full font-sans antialiased flex flex-col overflow-hidden select-none">
 
-    <!-- Top Navigation - clean & minimal -->
+    <!-- Top Navigation -->
     <header class="h-12 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md px-4 flex items-center justify-between z-30 shrink-0">
         <div class="flex items-center gap-3">
             <span class="text-sm font-semibold text-slate-300 tracking-tight">OmniPost</span>
@@ -154,50 +154,37 @@
                             <span class="font-semibold text-sm">Community Templates</span>
                             <span class="text-[10px] text-slate-500 ml-auto">Click to apply</span>
                         </div>
-                        
-                        <!-- Template Grid -->
                         <div class="grid grid-cols-3 gap-3">
-                            <!-- Minimal -->
                             <div onclick="loadTemplate('minimal')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-indigo-400">
                                 <div class="h-16 bg-gradient-to-b from-slate-700 to-slate-900 flex items-center justify-center text-[8px] text-slate-400">
                                     <span class="bg-slate-800/80 px-2 py-0.5 rounded">Minimal</span>
                                 </div>
                                 <div class="p-2 text-[9px] text-slate-400 text-center">Clean & Simple</div>
                             </div>
-                            
-                            <!-- Vibrant -->
                             <div onclick="loadTemplate('vibrant')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-purple-400">
                                 <div class="h-16 bg-gradient-to-b from-purple-600 to-pink-600 flex items-center justify-center text-[8px] text-white">
                                     <span class="bg-black/30 px-2 py-0.5 rounded">Vibrant</span>
                                 </div>
                                 <div class="p-2 text-[9px] text-slate-400 text-center">Bold & Colorful</div>
                             </div>
-                            
-                            <!-- Dark Mode -->
                             <div onclick="loadTemplate('dark')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-slate-400">
                                 <div class="h-16 bg-gradient-to-b from-slate-900 to-black flex items-center justify-center text-[8px] text-slate-400">
                                     <span class="bg-slate-800/80 px-2 py-0.5 rounded">Dark</span>
                                 </div>
                                 <div class="p-2 text-[9px] text-slate-400 text-center">Stealth Mode</div>
                             </div>
-                            
-                            <!-- Ocean -->
                             <div onclick="loadTemplate('ocean')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-cyan-400">
                                 <div class="h-16 bg-gradient-to-b from-cyan-900 to-blue-900 flex items-center justify-center text-[8px] text-white">
                                     <span class="bg-black/30 px-2 py-0.5 rounded">Ocean</span>
                                 </div>
                                 <div class="p-2 text-[9px] text-slate-400 text-center">Deep Blue</div>
                             </div>
-                            
-                            <!-- Sunset -->
                             <div onclick="loadTemplate('sunset')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-orange-400">
                                 <div class="h-16 bg-gradient-to-b from-orange-800 to-amber-900 flex items-center justify-center text-[8px] text-white">
                                     <span class="bg-black/30 px-2 py-0.5 rounded">Sunset</span>
                                 </div>
                                 <div class="p-2 text-[9px] text-slate-400 text-center">Warm Glow</div>
                             </div>
-                            
-                            <!-- Cyberpunk -->
                             <div onclick="loadTemplate('cyberpunk')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-pink-400">
                                 <div class="h-16 bg-gradient-to-b from-pink-900 to-cyan-900 flex items-center justify-center text-[8px] text-white">
                                     <span class="bg-black/30 px-2 py-0.5 rounded">Cyber</span>
@@ -205,13 +192,10 @@
                                 <div class="p-2 text-[9px] text-slate-400 text-center">Neon Vibes</div>
                             </div>
                         </div>
-                        
                         <div class="mt-3 text-[10px] text-slate-500 text-center border-t border-slate-800 pt-3">
                             💡 Templates will auto-update your colors
                         </div>
                     </div>
-                    
-                    <!-- Random Quote Button -->
                     <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
                         <button onclick="loadRandomQuote()" class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 px-4 py-2.5 rounded-lg text-xs font-medium transition flex items-center justify-center gap-2">
                             <span class="text-base">🔀</span> Try Random Quote
@@ -246,6 +230,8 @@
                                         <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                                         <option value="MM/DD/YYYY">MM/DD/YYYY</option>
                                         <option value="YYYY/MM/DD">YYYY/MM/DD</option>
+                                        <option value="DD MMM">DD MMM</option>
+                                        <option value="MMM DD">MMM DD</option>
                                     </select>
                                 </div>
                                 <input type="text" id="tagDate" oninput="updatePost()" placeholder="DD.MM.YYYY" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white text-xs">
@@ -260,8 +246,6 @@
                         <span class="font-semibold text-slate-300 block">Bottom Signature</span>
                         <input type="text" id="footerText" oninput="updatePostAndSave()" placeholder="@username // your-website.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white text-xs">
                     </div>
-                    
-                    <!-- Privacy section -->
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/60 text-xs space-y-3">
                         <div class="flex items-center gap-2 text-slate-300 font-semibold">
                             <span>🔒</span> Privacy & Data
@@ -312,12 +296,16 @@
             const canvas = document.getElementById('postCanvas');
             const ctx = canvas.getContext('2d');
 
+            const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
             // ============ DATE FORMAT HELPERS ============
             function getTodayDate(format) {
                 const now = new Date();
                 const year = now.getFullYear();
                 const month = String(now.getMonth() + 1).padStart(2, '0');
                 const day = String(now.getDate()).padStart(2, '0');
+                const monthShort = MONTHS_SHORT[now.getMonth()];
+                const dayNum = now.getDate();
                 
                 const formats = {
                     'DD.MM.YYYY': `${day}.${month}.${year}`,
@@ -325,7 +313,27 @@
                     'YYYY-MM-DD': `${year}-${month}-${day}`,
                     'DD/MM/YYYY': `${day}/${month}/${year}`,
                     'MM/DD/YYYY': `${month}/${day}/${year}`,
-                    'YYYY/MM/DD': `${year}/${month}/${day}`
+                    'YYYY/MM/DD': `${year}/${month}/${day}`,
+                    'DD MMM': `${dayNum} ${monthShort}`,
+                    'MMM DD': `${monthShort} ${dayNum}`
+                };
+                return formats[format] || formats['DD.MM.YYYY'];
+            }
+
+            function formatDateFromParts(day, month, year, format) {
+                const monthNum = String(month).padStart(2, '0');
+                const dayNum = String(day).padStart(2, '0');
+                const monthShort = MONTHS_SHORT[month - 1];
+                
+                const formats = {
+                    'DD.MM.YYYY': `${dayNum}.${monthNum}.${year}`,
+                    'MM.DD.YYYY': `${monthNum}.${dayNum}.${year}`,
+                    'YYYY-MM-DD': `${year}-${monthNum}-${dayNum}`,
+                    'DD/MM/YYYY': `${dayNum}/${monthNum}/${year}`,
+                    'MM/DD/YYYY': `${monthNum}/${dayNum}/${year}`,
+                    'YYYY/MM/DD': `${year}/${monthNum}/${dayNum}`,
+                    'DD MMM': `${day} ${monthShort}`,
+                    'MMM DD': `${monthShort} ${day}`
                 };
                 return formats[format] || formats['DD.MM.YYYY'];
             }
@@ -333,31 +341,16 @@
             window.formatDate = function() {
                 const format = document.getElementById('dateFormat').value;
                 const dateInput = document.getElementById('tagDate');
-                const currentDate = dateInput.value;
-                
-                // If the field is empty or contains a date, reformat it
-                if (currentDate === '') {
-                    // If empty, just set to today's date in the new format
+                if (dateInput.value === '') {
                     dateInput.value = getTodayDate(format);
                 } else {
-                    // Try to parse the current date and reformat it
-                    const parsed = parseDate(currentDate);
+                    const parsed = parseDate(dateInput.value);
                     if (parsed) {
                         const year = parsed.getFullYear();
-                        const month = String(parsed.getMonth() + 1).padStart(2, '0');
-                        const day = String(parsed.getDate()).padStart(2, '0');
-                        
-                        const formats = {
-                            'DD.MM.YYYY': `${day}.${month}.${year}`,
-                            'MM.DD.YYYY': `${month}.${day}.${year}`,
-                            'YYYY-MM-DD': `${year}-${month}-${day}`,
-                            'DD/MM/YYYY': `${day}/${month}/${year}`,
-                            'MM/DD/YYYY': `${month}/${day}/${year}`,
-                            'YYYY/MM/DD': `${year}/${month}/${day}`
-                        };
-                        dateInput.value = formats[format] || formats['DD.MM.YYYY'];
+                        const month = parsed.getMonth() + 1;
+                        const day = parsed.getDate();
+                        dateInput.value = formatDateFromParts(day, month, year, format);
                     } else {
-                        // If parsing fails, set to today's date
                         dateInput.value = getTodayDate(format);
                     }
                 }
@@ -365,21 +358,33 @@
             };
 
             function parseDate(str) {
-                // Try common formats
-                let parts;
-                // DD.MM.YYYY or DD/MM/YYYY
-                parts = str.match(/^(\d{2})[.\/](\d{2})[.\/](\d{4})$/);
+                // Try DD.MM.YYYY or DD/MM/YYYY
+                let parts = str.match(/^(\d{2})[.\/](\d{2})[.\/](\d{4})$/);
                 if (parts) return new Date(parts[3], parts[2] - 1, parts[1]);
-                // MM.DD.YYYY or MM/DD/YYYY
+                
+                // Try MM.DD.YYYY or MM/DD/YYYY
                 parts = str.match(/^(\d{2})[.\/](\d{2})[.\/](\d{4})$/);
                 if (parts) return new Date(parts[3], parts[1] - 1, parts[2]);
-                // YYYY-MM-DD or YYYY/MM/DD
+                
+                // Try YYYY-MM-DD or YYYY/MM/DD
                 parts = str.match(/^(\d{4})[-/](\d{2})[-/](\d{2})$/);
                 if (parts) return new Date(parts[1], parts[2] - 1, parts[3]);
+                
+                // Try DD MMM or MMM DD
+                parts = str.match(/^(\d{1,2}) ([A-Za-z]{3})$/);
+                if (parts) {
+                    const monthIndex = MONTHS_SHORT.indexOf(parts[2]);
+                    if (monthIndex !== -1) return new Date(new Date().getFullYear(), monthIndex, parseInt(parts[1]));
+                }
+                parts = str.match(/^([A-Za-z]{3}) (\d{1,2})$/);
+                if (parts) {
+                    const monthIndex = MONTHS_SHORT.indexOf(parts[1]);
+                    if (monthIndex !== -1) return new Date(new Date().getFullYear(), monthIndex, parseInt(parts[2]));
+                }
                 return null;
             }
 
-            // ============ LOCAL STORAGE HELPERS ============
+            // ============ LOCAL STORAGE ============
             function saveToStorage() {
                 try {
                     const data = {
@@ -401,25 +406,6 @@
                     if (data.footerText) document.getElementById('footerText').value = data.footerText;
                     if (data.dateFormat) {
                         document.getElementById('dateFormat').value = data.dateFormat;
-                        // Update date to match the saved format
-                        const dateInput = document.getElementById('tagDate');
-                        if (dateInput.value) {
-                            const parsed = parseDate(dateInput.value);
-                            if (parsed) {
-                                const year = parsed.getFullYear();
-                                const month = String(parsed.getMonth() + 1).padStart(2, '0');
-                                const day = String(parsed.getDate()).padStart(2, '0');
-                                const formats = {
-                                    'DD.MM.YYYY': `${day}.${month}.${year}`,
-                                    'MM.DD.YYYY': `${month}.${day}.${year}`,
-                                    'YYYY-MM-DD': `${year}-${month}-${day}`,
-                                    'DD/MM/YYYY': `${day}/${month}/${year}`,
-                                    'MM/DD/YYYY': `${month}/${day}/${year}`,
-                                    'YYYY/MM/DD': `${year}/${month}/${day}`
-                                };
-                                dateInput.value = formats[data.dateFormat] || formats['DD.MM.YYYY'];
-                            }
-                        }
                     }
                     document.getElementById('storageStatus').textContent = '💾 loaded';
                 } catch (e) { /* ignore */ }
@@ -433,69 +419,36 @@
                 document.getElementById('dateFormat').value = 'DD.MM.YYYY';
                 document.getElementById('storageStatus').textContent = '🗑️ cleared';
                 updatePost();
-                showToast('🧹 All saved data cleared from your browser (localStorage)');
+                showToast('🧹 All saved data cleared from your browser');
             };
 
-            // ============ WRAPPER FOR UPDATE + SAVE ============
             window.updatePostAndSave = function() {
                 updatePost();
                 saveToStorage();
             };
 
-            // ============ TEMPLATE SYSTEM ============
+            // ============ TEMPLATES ============
             const templates = {
-                minimal: {
-                    bg: '#0a0a12',
-                    card: '#14141e',
-                    text: '#e8e8f0',
-                    accent: '#3b82f6'
-                },
-                vibrant: {
-                    bg: '#1a0a2e',
-                    card: '#2d1b4e',
-                    text: '#f0e6ff',
-                    accent: '#ec4899'
-                },
-                dark: {
-                    bg: '#000000',
-                    card: '#0d0d0d',
-                    text: '#e5e5e5',
-                    accent: '#6366f1'
-                },
-                ocean: {
-                    bg: '#0a1628',
-                    card: '#0d2137',
-                    text: '#d4edff',
-                    accent: '#06b6d4'
-                },
-                sunset: {
-                    bg: '#1a0e08',
-                    card: '#2d1a0e',
-                    text: '#ffe8d4',
-                    accent: '#f97316'
-                },
-                cyberpunk: {
-                    bg: '#0a001a',
-                    card: '#1a0033',
-                    text: '#f0e6ff',
-                    accent: '#ec4899'
-                }
+                minimal: { bg: '#0a0a12', card: '#14141e', text: '#e8e8f0', accent: '#3b82f6' },
+                vibrant: { bg: '#1a0a2e', card: '#2d1b4e', text: '#f0e6ff', accent: '#ec4899' },
+                dark: { bg: '#000000', card: '#0d0d0d', text: '#e5e5e5', accent: '#6366f1' },
+                ocean: { bg: '#0a1628', card: '#0d2137', text: '#d4edff', accent: '#06b6d4' },
+                sunset: { bg: '#1a0e08', card: '#2d1a0e', text: '#ffe8d4', accent: '#f97316' },
+                cyberpunk: { bg: '#0a001a', card: '#1a0033', text: '#f0e6ff', accent: '#ec4899' }
             };
 
             window.loadTemplate = function(type) {
                 const t = templates[type];
                 if (!t) return;
-                
                 document.getElementById('bgBaseColor').value = t.bg;
                 document.getElementById('cardBgColor').value = t.card;
                 document.getElementById('textColor').value = t.text;
                 document.getElementById('accentColor').value = t.accent;
-                
                 updatePost();
                 showToast(`✅ Applied "${type}" template`);
             };
 
-            // ============ QUOTE LIBRARY ============
+            // ============ QUOTES ============
             const quotes = [
                 "Walls don't talk, but they definitely listen",
                 "The only way out is through",
@@ -516,11 +469,10 @@
                 showToast('🔀 Random quote loaded!');
             };
 
-            // ============ TOAST NOTIFICATIONS ============
+            // ============ TOAST ============
             function showToast(msg) {
                 const existing = document.querySelector('.toast-message');
                 if (existing) existing.remove();
-                
                 const toast = document.createElement('div');
                 toast.className = 'toast-message fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-xl text-sm z-50 shadow-2xl border border-slate-700';
                 toast.textContent = msg;
@@ -528,7 +480,7 @@
                 setTimeout(() => toast.remove(), 2500);
             }
 
-            // ============ RENDER FUNCTIONS ============
+            // ============ RENDER ============
             function drawRoundedPath(ctx, x, y, w, h, r) {
                 ctx.beginPath();
                 ctx.moveTo(x + r, y);
@@ -549,36 +501,22 @@
                 const rawWords = text.split(/\s+/);
                 const lines = [];
                 let currentLine = '';
-
                 rawWords.forEach(word => {
                     if (ctx.measureText(word).width > maxW) {
-                        if (currentLine) {
-                            lines.push(currentLine);
-                            currentLine = '';
-                        }
+                        if (currentLine) { lines.push(currentLine); currentLine = ''; }
                         let subWord = '';
                         for (let char of word) {
-                            if (ctx.measureText(subWord + char).width <= maxW) {
-                                subWord += char;
-                            } else {
-                                lines.push(subWord);
-                                subWord = char;
-                            }
+                            if (ctx.measureText(subWord + char).width <= maxW) { subWord += char; } 
+                            else { lines.push(subWord); subWord = char; }
                         }
                         if (subWord) currentLine = subWord;
                     } else {
                         const testLine = currentLine ? currentLine + ' ' + word : word;
-                        if (ctx.measureText(testLine).width <= maxW) {
-                            currentLine = testLine;
-                        } else {
-                            lines.push(currentLine);
-                            currentLine = word;
-                        }
+                        if (ctx.measureText(testLine).width <= maxW) { currentLine = testLine; } 
+                        else { lines.push(currentLine); currentLine = word; }
                     }
                 });
-                if (currentLine) {
-                    lines.push(currentLine);
-                }
+                if (currentLine) lines.push(currentLine);
                 return lines;
             }
 
@@ -586,27 +524,22 @@
                 ctx.save();
                 ctx.font = '700 20px system-ui, -apple-system, sans-serif';
                 const pillH = 56;
-
-                // Date pill (left)
                 const dateText = state.tagDate || 'DD.MM.YYYY';
-                const dateW = 160;
+                const dateW = Math.max(140, ctx.measureText(dateText).width + 40);
                 drawRoundedRect(ctx, cardX, y, dateW, pillH, 16, state.accentColor);
                 ctx.fillStyle = '#ffffff';
                 ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                 ctx.fillText(dateText, cardX + dateW/2, y + pillH/2);
 
-                // Handle pill (right)
                 const handleText = state.tagHandle || '@username';
                 const handleW = Math.max(140, ctx.measureText(handleText).width + 30);
                 const handleX = cardX + cardW - handleW;
                 drawRoundedRect(ctx, handleX, y, handleW, pillH, 16, state.accentColor);
                 ctx.fillStyle = '#ffffff';
                 ctx.fillText(handleText, handleX + handleW/2, y + pillH/2);
-
                 ctx.restore();
             }
 
-            // ============ MAIN UPDATE ============
             window.updatePost = function() {
                 state.quoteText = document.getElementById('quoteText').value;
                 state.bgBaseColor = document.getElementById('bgBaseColor').value;
@@ -702,11 +635,10 @@
                 ctx.restore();
             };
 
-            // ============ LIVE DATE/TIME ============
+            // ============ DATE SYNC ============
             window.loadLiveDateTime = function() {
                 const format = document.getElementById('dateFormat').value;
-                const formattedDate = getTodayDate(format);
-                document.getElementById('tagDate').value = formattedDate;
+                document.getElementById('tagDate').value = getTodayDate(format);
                 updatePost();
                 saveToStorage();
                 showToast('📅 Date synced with today!');
@@ -716,7 +648,6 @@
             window.switchTab = function(tabName) {
                 document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
                 document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-
                 ['content', 'templates', 'meta'].forEach(id => {
                     const btn = document.getElementById(`tabBtn-${id}`);
                     if (id === tabName) {
@@ -727,33 +658,27 @@
                 });
             };
 
-            // ============ EXPORT WITH FILE NAME PROMPT ============
+            // ============ EXPORT ============
             window.exportImage = function() {
                 updatePost();
-                
                 const now = new Date();
                 const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
                 const defaultName = `omnipost-${dateStr}`;
-                
                 const fileName = prompt('Enter a name for your image:', defaultName);
                 const finalName = (fileName && fileName.trim() !== '') ? fileName.trim() : defaultName;
-                
                 const link = document.createElement('a');
                 link.download = `${finalName}.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
-                
                 showToast(`⬇️ Saved as "${finalName}.png"`);
             };
 
             // ============ INIT ============
             window.addEventListener('DOMContentLoaded', () => {
                 loadFromStorage();
-                // If date is empty, set it to today
                 const dateInput = document.getElementById('tagDate');
                 if (!dateInput.value) {
-                    const format = document.getElementById('dateFormat').value;
-                    dateInput.value = getTodayDate(format);
+                    dateInput.value = getTodayDate(document.getElementById('dateFormat').value);
                 }
                 updatePost();
                 document.getElementById('tagHandle').addEventListener('input', saveToStorage);
