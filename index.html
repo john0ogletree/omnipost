@@ -265,6 +265,12 @@
                                 </div>
                                 <div class="p-2 text-[9px] text-slate-400 text-center">Neon Vibes</div>
                             </div>
+                            <div onclick="loadTemplate('remembrance')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-stone-400">
+                                <div class="h-16 bg-gradient-to-b from-stone-600 via-stone-700 to-stone-900 flex items-center justify-center text-[8px] text-stone-200">
+                                    <span class="bg-black/40 px-2 py-0.5 rounded">🕊️ Remembrance</span>
+                                </div>
+                                <div class="p-2 text-[9px] text-slate-400 text-center">Honor & Memory</div>
+                            </div>
                         </div>
                         <div class="mt-3 text-[10px] text-slate-500 text-center border-t border-slate-800 pt-3">
                             💡 Templates will auto-update your colors
@@ -334,39 +340,27 @@
                         
                         <!-- Donation Buttons Grid -->
                         <div class="donation-grid">
-                            <!-- Buy Me a Coffee - Full Width -->
                             <a href="https://www.buymeacoffee.com/john0ogletree" target="_blank" rel="noopener noreferrer" class="full-width donate-btn w-full text-center text-white text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 shadow-lg shadow-amber-600/20">
                                 <span>☕</span>
                                 Buy me a coffee
                             </a>
-                            
-                            <!-- GitHub Sponsor -->
                             <a href="https://github.com/sponsors/john-ogletree" target="_blank" rel="noopener noreferrer" class="donate-btn-small bg-slate-800 hover:bg-slate-700 text-slate-300 text-[9px] font-medium px-3 py-2 rounded-lg transition-colors border border-slate-700 flex items-center justify-center gap-1.5">
                                 <span>🐙</span> GitHub
                             </a>
-                            
-                            <!-- GoFundMe -->
                             <a href="https://gofundme.com/u/john0ogletree" target="_blank" rel="noopener noreferrer" class="donate-btn-small gofundme-color text-[9px] font-medium px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20">
                                 <span>🎗️</span> GoFundMe
                             </a>
-                            
-                            <!-- Venmo -->
                             <a href="https://venmo.com/john0ogletree" target="_blank" rel="noopener noreferrer" class="donate-btn-small venmo-color text-[9px] font-medium px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-blue-600/20">
                                 <span>💳</span> Venmo
                             </a>
-                            
-                            <!-- Cash App -->
                             <a href="https://cash.app/$john0ogletree" target="_blank" rel="noopener noreferrer" class="donate-btn-small cashapp-color text-[9px] font-bold px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-green-600/20">
                                 <span>💰</span> Cash App
                             </a>
-                            
-                            <!-- Chime -->
                             <a href="#" onclick="copyChimeTag(); return false;" class="donate-btn-small chime-color text-[9px] font-medium px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-blue-600/20 cursor-pointer">
                                 <span>🏦</span> Chime
                             </a>
                         </div>
                         
-                        <!-- Chime tag display (hidden by default, shows when clicked) -->
                         <div id="chimeTagContainer" class="hidden bg-slate-800/60 p-2 rounded-lg border border-blue-500/30 text-center transition-all">
                             <span class="text-[9px] text-slate-400">Chime Tag:</span>
                             <span class="text-[10px] font-mono text-blue-300 font-semibold select-all">$john0ogletree</span>
@@ -597,7 +591,8 @@
                 dark: { bg: '#000000', card: '#0d0d0d', text: '#e5e5e5', accent: '#6366f1' },
                 ocean: { bg: '#0a1628', card: '#0d2137', text: '#d4edff', accent: '#06b6d4' },
                 sunset: { bg: '#1a0e08', card: '#2d1a0e', text: '#ffe8d4', accent: '#f97316' },
-                cyberpunk: { bg: '#0a001a', card: '#1a0033', text: '#f0e6ff', accent: '#ec4899' }
+                cyberpunk: { bg: '#0a001a', card: '#1a0033', text: '#f0e6ff', accent: '#ec4899' },
+                remembrance: { bg: '#1c1917', card: '#292524', text: '#e7e5e4', accent: '#a8a29e' }
             };
 
             window.loadTemplate = function(type) {
