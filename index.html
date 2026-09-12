@@ -100,38 +100,14 @@
             0%, 100% { transform: rotate(0deg) scale(1); }
             50% { transform: rotate(-5deg) scale(1.1); }
         }
-        .cashapp-color {
-            background: #00d632;
-            color: #000;
-        }
-        .cashapp-color:hover {
-            background: #00e63a;
-            box-shadow: 0 0 25px rgba(0, 214, 50, 0.3);
-        }
-        .venmo-color {
-            background: #008CFF;
-            color: #fff;
-        }
-        .venmo-color:hover {
-            background: #1a9aff;
-            box-shadow: 0 0 25px rgba(0, 140, 255, 0.3);
-        }
-        .chime-color {
-            background: #0066ff;
-            color: #fff;
-        }
-        .chime-color:hover {
-            background: #1a75ff;
-            box-shadow: 0 0 25px rgba(0, 102, 255, 0.3);
-        }
-        .gofundme-color {
-            background: #00b37e;
-            color: #fff;
-        }
-        .gofundme-color:hover {
-            background: #00cc8f;
-            box-shadow: 0 0 25px rgba(0, 179, 126, 0.3);
-        }
+        .cashapp-color { background: #00d632; color: #000; }
+        .cashapp-color:hover { background: #00e63a; box-shadow: 0 0 25px rgba(0, 214, 50, 0.3); }
+        .venmo-color { background: #008CFF; color: #fff; }
+        .venmo-color:hover { background: #1a9aff; box-shadow: 0 0 25px rgba(0, 140, 255, 0.3); }
+        .chime-color { background: #0066ff; color: #fff; }
+        .chime-color:hover { background: #1a75ff; box-shadow: 0 0 25px rgba(0, 102, 255, 0.3); }
+        .gofundme-color { background: #00b37e; color: #fff; }
+        .gofundme-color:hover { background: #00cc8f; box-shadow: 0 0 25px rgba(0, 179, 126, 0.3); }
         .donation-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -139,6 +115,23 @@
         }
         .donation-grid .full-width {
             grid-column: 1 / -1;
+        }
+        .shuffle-btn {
+            transition: all 0.2s;
+        }
+        .shuffle-btn:hover {
+            background: #334155;
+            transform: scale(1.05);
+        }
+        .shuffle-btn:active {
+            transform: scale(0.9) rotate(180deg);
+        }
+        @keyframes shuffle-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .shuffle-spin {
+            animation: shuffle-spin 0.5s ease-out;
         }
     </style>
 </head>
@@ -151,6 +144,10 @@
             <span class="storage-badge" id="storageStatus">💾 auto-save</span>
         </div>
         <div class="flex items-center gap-2">
+            <button onclick="shuffleTheme()" id="shuffleBtn" class="shuffle-btn text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5" title="Random theme">
+                <span id="shuffleIcon" class="text-base leading-none">🎲</span>
+                <span>Shuffle</span>
+            </button>
             <button onclick="document.getElementById('donateSection').scrollIntoView({behavior:'smooth'})" class="text-[10px] bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 px-3 py-1.5 rounded-lg transition-all border border-amber-600/20 flex items-center gap-1.5">
                 <span class="coffee-emoji">☕</span>
                 <span>Support</span>
@@ -203,19 +200,19 @@
                         <span class="font-semibold text-slate-300 block">Theme & Color Customization</span>
                         <div class="flex items-center justify-between">
                             <span class="text-slate-300">Background Color</span>
-                            <input type="color" id="bgBaseColor" value="#04060a" onchange="updatePost()" class="w-8 h-8 bg-transparent cursor-pointer">
+                            <input type="color" id="bgBaseColor" value="#04060a" onchange="updatePostAndSaveColors()" class="w-8 h-8 bg-transparent cursor-pointer">
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-slate-300">Card Box Color</span>
-                            <input type="color" id="cardBgColor" value="#0d111c" onchange="updatePost()" class="w-8 h-8 bg-transparent cursor-pointer">
+                            <input type="color" id="cardBgColor" value="#0d111c" onchange="updatePostAndSaveColors()" class="w-8 h-8 bg-transparent cursor-pointer">
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-slate-300">Text Color</span>
-                            <input type="color" id="textColor" value="#ffffff" onchange="updatePost()" class="w-8 h-8 bg-transparent cursor-pointer">
+                            <input type="color" id="textColor" value="#ffffff" onchange="updatePostAndSaveColors()" class="w-8 h-8 bg-transparent cursor-pointer">
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-slate-300">Accent Pill Color</span>
-                            <input type="color" id="accentColor" value="#2563eb" onchange="updatePost()" class="w-8 h-8 bg-transparent cursor-pointer">
+                            <input type="color" id="accentColor" value="#2563eb" onchange="updatePostAndSaveColors()" class="w-8 h-8 bg-transparent cursor-pointer">
                         </div>
                     </div>
                 </div>
@@ -276,7 +273,10 @@
                             💡 Templates will auto-update your colors
                         </div>
                     </div>
-                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                        <button onclick="shuffleTheme()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-lg text-xs font-medium transition flex items-center justify-center gap-2 border border-slate-700">
+                            <span class="text-base">🎲</span> Shuffle Theme
+                        </button>
                         <button onclick="loadRandomQuote()" class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 px-4 py-2.5 rounded-lg text-xs font-medium transition flex items-center justify-center gap-2">
                             <span class="text-base">🔀</span> Try Random Quote
                         </button>
@@ -338,7 +338,6 @@
                             If OmniPost saves you time or sparks creativity, consider buying me a coffee. It helps keep this tool free and open for everyone.
                         </p>
                         
-                        <!-- Donation Buttons Grid -->
                         <div class="donation-grid">
                             <a href="https://www.buymeacoffee.com/john0ogletree" target="_blank" rel="noopener noreferrer" class="full-width donate-btn w-full text-center text-white text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 shadow-lg shadow-amber-600/20">
                                 <span>☕</span>
@@ -423,6 +422,92 @@
             const ctx = canvas.getContext('2d');
 
             const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            // ============ TEMPLATES ============
+            const templates = {
+                minimal:    { bg: '#0a0a12', card: '#14141e', text: '#e8e8f0', accent: '#3b82f6' },
+                vibrant:    { bg: '#1a0a2e', card: '#2d1b4e', text: '#f0e6ff', accent: '#ec4899' },
+                dark:       { bg: '#000000', card: '#0d0d0d', text: '#e5e5e5', accent: '#6366f1' },
+                ocean:      { bg: '#0a1628', card: '#0d2137', text: '#d4edff', accent: '#06b6d4' },
+                sunset:     { bg: '#1a0e08', card: '#2d1a0e', text: '#ffe8d4', accent: '#f97316' },
+                cyberpunk:  { bg: '#0a001a', card: '#1a0033', text: '#f0e6ff', accent: '#ec4899' },
+                remembrance:{ bg: '#1c1917', card: '#292524', text: '#e7e5e4', accent: '#a8a29e' }
+            };
+
+            // Emoji labels for toast feedback
+            const templateEmojis = {
+                minimal: '⚪',
+                vibrant: '🌈',
+                dark: '🌑',
+                ocean: '🌊',
+                sunset: '🌅',
+                cyberpunk: '⚡',
+                remembrance: '🕊️'
+            };
+
+            // ============ SHUFFLE / RANDOM THEME ============
+            let lastTemplate = null;
+
+            function pickRandomTheme() {
+                const keys = Object.keys(templates);
+                // Anti-repeat: don't pick the same as last time
+                let pool = keys.filter(k => k !== lastTemplate);
+                if (pool.length === 0) pool = keys; // fallback
+                const chosen = pool[Math.floor(Math.random() * pool.length)];
+                lastTemplate = chosen;
+                return chosen;
+            }
+
+            function applyTheme(type, options = {}) {
+                const t = templates[type];
+                if (!t) return;
+                document.getElementById('bgBaseColor').value = t.bg;
+                document.getElementById('cardBgColor').value = t.card;
+                document.getElementById('textColor').value = t.text;
+                document.getElementById('accentColor').value = t.accent;
+                updatePost();
+                if (!options.silent) {
+                    const emoji = templateEmojis[type] || '🎨';
+                    const label = type.charAt(0).toUpperCase() + type.slice(1);
+                    showToast(`${emoji} Theme: ${label}`);
+                }
+            }
+
+            window.shuffleTheme = function() {
+                // Spin the icon
+                const icon = document.getElementById('shuffleIcon');
+                icon.classList.remove('shuffle-spin');
+                void icon.offsetWidth; // force reflow
+                icon.classList.add('shuffle-spin');
+
+                const chosen = pickRandomTheme();
+                applyTheme(chosen);
+                saveTheme(chosen);
+                saveToStorage();
+            };
+
+            window.loadTemplate = function(type) {
+                applyTheme(type);
+                lastTemplate = type;
+                saveTheme(type);
+                saveToStorage();
+            };
+
+            // ============ THEME PERSISTENCE ============
+            function saveTheme(type) {
+                try { localStorage.setItem('omnipost_theme', type); } catch(e) {}
+            }
+            function loadTheme() {
+                try { return localStorage.getItem('omnipost_theme'); } catch(e) { return null; }
+            }
+
+            // ============ COLOR CHANGE (manual) ============
+            window.updatePostAndSaveColors = function() {
+                updatePost();
+                // Mark theme as "custom" since user tweaked colors manually
+                saveTheme('custom');
+                saveToStorage();
+            };
 
             // ============ COPY CHIME TAG ============
             window.copyChimeTag = function() {
@@ -519,13 +604,12 @@
                     }
                 }
                 updatePost();
+                saveToStorage();
             };
 
             function parseDate(str) {
                 let parts = str.match(/^(\d{2})[.\/](\d{2})[.\/](\d{4})$/);
                 if (parts) return new Date(parts[3], parts[2] - 1, parts[1]);
-                parts = str.match(/^(\d{2})[.\/](\d{2})[.\/](\d{4})$/);
-                if (parts) return new Date(parts[3], parts[1] - 1, parts[2]);
                 parts = str.match(/^(\d{4})[-/](\d{2})[-/](\d{2})$/);
                 if (parts) return new Date(parts[1], parts[2] - 1, parts[3]);
                 parts = str.match(/^(\d{1,2}) ([A-Za-z]{3})$/);
@@ -547,7 +631,13 @@
                     const data = {
                         tagHandle: document.getElementById('tagHandle').value,
                         footerText: document.getElementById('footerText').value,
-                        dateFormat: document.getElementById('dateFormat').value
+                        dateFormat: document.getElementById('dateFormat').value,
+                        colors: {
+                            bg: document.getElementById('bgBaseColor').value,
+                            card: document.getElementById('cardBgColor').value,
+                            text: document.getElementById('textColor').value,
+                            accent: document.getElementById('accentColor').value
+                        }
                     };
                     localStorage.setItem('omnipost_user_data', JSON.stringify(data));
                     document.getElementById('storageStatus').textContent = '💾 saved';
@@ -557,53 +647,42 @@
             function loadFromStorage() {
                 try {
                     const raw = localStorage.getItem('omnipost_user_data');
-                    if (!raw) return;
+                    if (!raw) return false;
                     const data = JSON.parse(raw);
                     if (data.tagHandle) document.getElementById('tagHandle').value = data.tagHandle;
                     if (data.footerText) document.getElementById('footerText').value = data.footerText;
                     if (data.dateFormat) {
                         document.getElementById('dateFormat').value = data.dateFormat;
                     }
+                    if (data.colors) {
+                        if (data.colors.bg) document.getElementById('bgBaseColor').value = data.colors.bg;
+                        if (data.colors.card) document.getElementById('cardBgColor').value = data.colors.card;
+                        if (data.colors.text) document.getElementById('textColor').value = data.colors.text;
+                        if (data.colors.accent) document.getElementById('accentColor').value = data.colors.accent;
+                    }
                     document.getElementById('storageStatus').textContent = '💾 loaded';
-                } catch (e) { /* ignore */ }
+                    return true;
+                } catch (e) { return false; }
             }
 
             window.clearStoredData = function() {
                 localStorage.removeItem('omnipost_user_data');
+                localStorage.removeItem('omnipost_theme');
                 document.getElementById('tagHandle').value = '';
                 document.getElementById('footerText').value = '';
                 document.getElementById('tagDate').value = '';
                 document.getElementById('dateFormat').value = 'DD.MM.YYYY';
                 document.getElementById('storageStatus').textContent = '🗑️ cleared';
-                updatePost();
-                showToast('🧹 All saved data cleared from your browser');
+                // Apply a fresh random theme
+                const chosen = pickRandomTheme();
+                applyTheme(chosen, { silent: true });
+                saveTheme(chosen);
+                showToast('🧹 Cleared — rolled a fresh theme');
             };
 
             window.updatePostAndSave = function() {
                 updatePost();
                 saveToStorage();
-            };
-
-            // ============ TEMPLATES ============
-            const templates = {
-                minimal: { bg: '#0a0a12', card: '#14141e', text: '#e8e8f0', accent: '#3b82f6' },
-                vibrant: { bg: '#1a0a2e', card: '#2d1b4e', text: '#f0e6ff', accent: '#ec4899' },
-                dark: { bg: '#000000', card: '#0d0d0d', text: '#e5e5e5', accent: '#6366f1' },
-                ocean: { bg: '#0a1628', card: '#0d2137', text: '#d4edff', accent: '#06b6d4' },
-                sunset: { bg: '#1a0e08', card: '#2d1a0e', text: '#ffe8d4', accent: '#f97316' },
-                cyberpunk: { bg: '#0a001a', card: '#1a0033', text: '#f0e6ff', accent: '#ec4899' },
-                remembrance: { bg: '#1c1917', card: '#292524', text: '#e7e5e4', accent: '#a8a29e' }
-            };
-
-            window.loadTemplate = function(type) {
-                const t = templates[type];
-                if (!t) return;
-                document.getElementById('bgBaseColor').value = t.bg;
-                document.getElementById('cardBgColor').value = t.card;
-                document.getElementById('textColor').value = t.text;
-                document.getElementById('accentColor').value = t.accent;
-                updatePost();
-                showToast(`✅ Applied "${type}" template`);
             };
 
             // ============ QUOTES ============
@@ -833,15 +912,51 @@
 
             // ============ INIT ============
             window.addEventListener('DOMContentLoaded', () => {
-                loadFromStorage();
+                const hadSavedData = loadFromStorage();
+                const savedTheme = loadTheme();
+
                 const dateInput = document.getElementById('tagDate');
                 if (!dateInput.value) {
                     dateInput.value = getTodayDate(document.getElementById('dateFormat').value);
                 }
+
+                // THEME LOGIC
+                if (savedTheme && savedTheme !== 'custom' && templates[savedTheme]) {
+                    // User has a known saved theme — restore it silently
+                    lastTemplate = savedTheme;
+                    applyTheme(savedTheme, { silent: true });
+                } else if (savedTheme === 'custom' && hadSavedData) {
+                    // User manually tweaked colors — keep them (loaded from storage)
+                    // Just refresh the canvas
+                    updatePost();
+                } else {
+                    // First visit (or cleared) — roll a random theme
+                    const chosen = pickRandomTheme();
+                    applyTheme(chosen, { silent: true });
+                    saveTheme(chosen);
+                    // Friendly first-visit toast (delayed a touch so it feels intentional)
+                    setTimeout(() => {
+                        const emoji = templateEmojis[chosen] || '🎨';
+                        const label = chosen.charAt(0).toUpperCase() + chosen.slice(1);
+                        showToast(`${emoji} Welcome! Rolled: ${label}`);
+                    }, 600);
+                }
+
                 updatePost();
+
                 document.getElementById('tagHandle').addEventListener('input', saveToStorage);
                 document.getElementById('footerText').addEventListener('input', saveToStorage);
                 document.getElementById('dateFormat').addEventListener('change', saveToStorage);
+
+                // Keyboard shortcut: press "R" to shuffle (when not typing in a field)
+                document.addEventListener('keydown', (e) => {
+                    const tag = (e.target.tagName || '').toLowerCase();
+                    if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+                    if (e.key === 'r' || e.key === 'R') {
+                        e.preventDefault();
+                        shuffleTheme();
+                    }
+                });
             });
 
         })();
