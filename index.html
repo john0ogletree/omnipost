@@ -18,85 +18,39 @@
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 0.5rem; }
         body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        .tab-btn-active {
-            background: #1e293b;
-            color: #818cf8;
-            font-weight: 600;
-        }
-        .tab-btn-inactive {
-            color: #94a3b8;
-        }
-        .tab-btn-inactive:hover {
-            color: #e2e8f0;
-        }
-        .template-preview {
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .template-preview:hover {
-            transform: scale(1.05);
-            border-color: #818cf8;
-        }
-        .template-preview:active {
-            transform: scale(0.95);
-        }
-        ::placeholder {
-            color: #475569;
-            opacity: 0.6;
-        }
-        .toast-message {
-            animation: fadeSlide 0.25s ease-out;
-        }
+        .tab-btn-active { background: #1e293b; color: #818cf8; font-weight: 600; }
+        .tab-btn-inactive { color: #94a3b8; }
+        .tab-btn-inactive:hover { color: #e2e8f0; }
+        .template-preview { transition: all 0.2s; cursor: pointer; }
+        .template-preview:hover { transform: scale(1.05); border-color: #818cf8; }
+        .template-preview:active { transform: scale(0.95); }
+        ::placeholder { color: #475569; opacity: 0.6; }
+        .toast-message { animation: fadeSlide 0.25s ease-out; }
         @keyframes fadeSlide {
             0% { opacity: 0; transform: translate(-50%, 20px); }
             100% { opacity: 1; transform: translate(-50%, 0); }
         }
         .storage-badge {
-            background: #1e293b;
-            color: #94a3b8;
-            font-size: 9px;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            border: 1px solid #334155;
+            background: #1e293b; color: #94a3b8; font-size: 9px;
+            padding: 2px 8px; border-radius: 9999px; border: 1px solid #334155;
         }
         select option { background: #0f172a; color: #e2e8f0; }
         .date-format-select {
-            background: #0f172a;
-            color: #e2e8f0;
-            border: 1px solid #1e293b;
-            border-radius: 6px;
-            padding: 2px 6px;
-            font-size: 10px;
-            cursor: pointer;
-            outline: none;
+            background: #0f172a; color: #e2e8f0; border: 1px solid #1e293b;
+            border-radius: 6px; padding: 2px 6px; font-size: 10px;
+            cursor: pointer; outline: none;
         }
-        .date-format-select:focus {
-            border-color: #6366f1;
-        }
+        .date-format-select:focus { border-color: #6366f1; }
         .donate-btn {
             background: linear-gradient(135deg, #f59e0b, #d97706);
             transition: all 0.2s;
         }
-        .donate-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
-        }
-        .donate-btn:active {
-            transform: scale(0.97);
-        }
-        .donate-btn-small {
-            transition: all 0.2s;
-        }
-        .donate-btn-small:hover {
-            transform: scale(1.03);
-        }
-        .donate-btn-small:active {
-            transform: scale(0.95);
-        }
-        .coffee-emoji {
-            display: inline-block;
-            animation: steam 2s ease-in-out infinite;
-        }
+        .donate-btn:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(245, 158, 11, 0.3); }
+        .donate-btn:active { transform: scale(0.97); }
+        .donate-btn-small { transition: all 0.2s; }
+        .donate-btn-small:hover { transform: scale(1.03); }
+        .donate-btn-small:active { transform: scale(0.95); }
+        .coffee-emoji { display: inline-block; animation: steam 2s ease-in-out infinite; }
         @keyframes steam {
             0%, 100% { transform: rotate(0deg) scale(1); }
             50% { transform: rotate(-5deg) scale(1.1); }
@@ -112,29 +66,30 @@
         .paypal-color { background: #0070ba; color: #fff; }
         .paypal-color:hover { background: #0085dd; box-shadow: 0 0 25px rgba(0, 112, 186, 0.3); }
         .donation-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
         }
-        .donation-grid .full-width {
-            grid-column: 1 / -1;
-        }
-        .shuffle-btn {
-            transition: all 0.2s;
-        }
-        .shuffle-btn:hover {
-            background: #334155;
-            transform: scale(1.05);
-        }
-        .shuffle-btn:active {
-            transform: scale(0.9) rotate(180deg);
-        }
+        .donation-grid .full-width { grid-column: 1 / -1; }
+        .shuffle-btn { transition: all 0.2s; }
+        .shuffle-btn:hover { background: #334155; transform: scale(1.05); }
+        .shuffle-btn:active { transform: scale(0.9) rotate(180deg); }
         @keyframes shuffle-spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .shuffle-spin {
-            animation: shuffle-spin 0.5s ease-out;
+        .shuffle-spin { animation: shuffle-spin 0.5s ease-out; }
+
+        .upload-drop {
+            border: 1.5px dashed #334155;
+            transition: all 0.15s;
+        }
+        .upload-drop:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
+        }
+        .upload-thumb {
+            width: 36px; height: 36px;
+            border-radius: 6px; object-fit: cover;
+            border: 1px solid #334155; background: #0f172a;
         }
     </style>
 </head>
@@ -192,6 +147,31 @@
                         <label class="text-xs font-semibold text-slate-300 mb-1 block">Main Quote / Card Text</label>
                         <textarea id="quoteText" rows="4" oninput="updatePost()" placeholder="Enter your quote here..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 focus:outline-none resize-none font-semibold"></textarea>
                     </div>
+
+                    <!-- CARD IMAGE -->
+                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
+                        <span class="font-semibold text-slate-300 block">Card Image</span>
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span class="text-[10px] text-slate-500">Image shown inside the card, above the quote</span>
+                            <button id="clearCardImageBtn" onclick="clearCardImage()" class="hidden text-[10px] text-red-300 hover:text-red-200 bg-red-500/10 hover:bg-red-500/20 px-2 py-0.5 rounded-md border border-red-500/20 transition-colors">Remove</button>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <img id="cardImageThumb" class="upload-thumb hidden" alt="">
+                            <label class="upload-drop flex-1 flex items-center justify-center gap-2 bg-slate-950 rounded-lg px-3 py-2.5 cursor-pointer text-slate-400 hover:text-indigo-300 text-[11px]">
+                                <span>🖼️</span>
+                                <span id="cardImageLabel">Upload card image…</span>
+                                <input type="file" id="cardImageInput" accept="image/*" class="hidden">
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] text-slate-500">Max height</span>
+                            <input type="range" id="cardImageSize" min="120" max="500" value="260" oninput="updatePost()" class="w-32 accent-indigo-500">
+                        </div>
+                        <div class="text-[10px] text-slate-500 text-center pt-2 border-t border-slate-800/70">
+                            🔒 Uploads stay in memory only — cleared on reload
+                        </div>
+                    </div>
+
                     <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
                         <span class="font-semibold text-slate-300 block">Theme & Color Customization</span>
                         <div class="flex items-center justify-between">
@@ -411,7 +391,8 @@
                 tagDate: "",
                 tagHandle: "",
                 footerText: "",
-                dateFormat: "DD.MM.YYYY"
+                dateFormat: "DD.MM.YYYY",
+                cardImage: null
             };
 
             const canvas = document.getElementById('postCanvas');
@@ -509,6 +490,66 @@
                 saveTheme(THEME_CUSTOM);
                 updatePost();
                 saveToStorage();
+            }
+
+            // ============ CARD IMAGE UPLOAD ============
+            function handleImageUpload(file, onLoaded) {
+                if (!file || !file.type.startsWith('image/')) {
+                    showToast('⚠️ Please choose an image file');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => onLoaded(img, e.target.result);
+                    img.onerror = () => showToast('⚠️ Could not load image');
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => showToast('⚠️ Could not read file');
+                reader.readAsDataURL(file);
+            }
+
+            function setupCardImageUpload() {
+                const input = document.getElementById('cardImageInput');
+                input.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    handleImageUpload(file, (img, dataUrl) => {
+                        state.cardImage = img;
+                        const thumb = document.getElementById('cardImageThumb');
+                        thumb.src = dataUrl;
+                        thumb.classList.remove('hidden');
+                        document.getElementById('cardImageLabel').textContent = file.name.length > 20 ? file.name.slice(0, 17) + '…' : file.name;
+                        document.getElementById('clearCardImageBtn').classList.remove('hidden');
+                        updatePost();
+                        showToast('🖼️ Card image loaded');
+                    });
+                    input.value = '';
+                });
+            }
+
+            function clearCardImage() {
+                state.cardImage = null;
+                document.getElementById('cardImageInput').value = '';
+                document.getElementById('cardImageThumb').classList.add('hidden');
+                document.getElementById('cardImageLabel').textContent = 'Upload card image…';
+                document.getElementById('clearCardImageBtn').classList.add('hidden');
+                updatePost();
+                showToast('🖼️ Card image removed');
+            }
+
+            // Fit image inside a box (contain), return drawn dimensions + centered position
+            function fitContain(img, boxW, boxH) {
+                const ratio = img.width / img.height;
+                let drawW, drawH;
+                if (ratio > boxW / boxH) {
+                    drawW = boxW;
+                    drawH = boxW / ratio;
+                } else {
+                    drawH = boxH;
+                    drawW = boxH * ratio;
+                }
+                return { w: drawW, h: drawH };
             }
 
             function copyChimeTag() {
@@ -801,8 +842,34 @@
                 drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 64, state.cardBgColor);
                 ctx.restore();
 
-                const maxAllowedWidth = cardW - 140;
-                const maxAllowedHeight = cardH - 120;
+                const sidePad = 70;
+                const contentX = cardX + sidePad;
+                const contentW = cardW - sidePad * 2;
+
+                // --- Card image at top of card (if present) ---
+                let imageBlockHeight = 0;
+                const imageGap = 50;
+                if (state.cardImage) {
+                    const maxImgH = parseInt(document.getElementById('cardImageSize').value, 10);
+                    const topPad = 70;
+                    const fit = fitContain(state.cardImage, contentW, maxImgH);
+                    const imgX = cardX + (cardW - fit.w) / 2;
+                    const imgY = cardY + topPad;
+
+                    ctx.save();
+                    ctx.drawImage(state.cardImage, imgX, imgY, fit.w, fit.h);
+                    ctx.restore();
+
+                    imageBlockHeight = topPad + fit.h + imageGap;
+                }
+
+                // --- Quote text (auto-fit in remaining space) ---
+                const textAreaTop = cardY + imageBlockHeight;
+                const textAreaH = cardH - imageBlockHeight;
+                const textAreaCenterY = textAreaTop + textAreaH / 2;
+
+                const maxAllowedWidth = contentW;
+                const maxAllowedHeight = textAreaH - 140;
                 let fontSize = 24;
                 const maxFontSize = 76;
                 let bestLines = [];
@@ -814,7 +881,7 @@
                     ctx.fillStyle = '#475569';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText('Enter your quote above', w / 2, cardY + cardH / 2);
+                    ctx.fillText('Enter your quote above', w / 2, textAreaCenterY);
                     ctx.restore();
                 } else {
                     while (fontSize <= maxFontSize) {
@@ -850,7 +917,7 @@
                     ctx.textBaseline = 'middle';
 
                     const totalTextHeight = bestLines.length * bestLineHeight;
-                    let startY = cardY + (cardH / 2) - (totalTextHeight / 2);
+                    let startY = textAreaCenterY - (totalTextHeight / 2);
 
                     bestLines.forEach((line, index) => {
                         ctx.fillText(line, w / 2, startY + (index * bestLineHeight) + (bestLineHeight / 2));
@@ -916,10 +983,13 @@
             window.clearStoredData = clearStoredData;
             window.copyChimeTag = copyChimeTag;
             window.formatDate = formatDate;
+            window.clearCardImage = clearCardImage;
 
             window.addEventListener('DOMContentLoaded', () => {
                 const hadSavedData = loadFromStorage();
                 const savedTheme = loadTheme();
+
+                setupCardImageUpload();
 
                 const dateInput = document.getElementById('tagDate');
                 if (!dateInput.value) {
