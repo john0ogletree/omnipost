@@ -137,7 +137,6 @@
 </head>
 <body class="h-full font-sans antialiased flex flex-col overflow-hidden select-none">
 
-    <!-- Top Navigation -->
     <header class="h-12 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md px-4 flex items-center justify-between z-30 shrink-0">
         <div class="flex items-center gap-3">
             <span class="text-sm font-semibold text-slate-300 tracking-tight">OmniPost</span>
@@ -159,19 +158,15 @@
         </div>
     </header>
 
-    <!-- Main Workspace -->
     <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
 
-        <!-- Stage Preview -->
         <main class="w-full md:flex-1 bg-slate-950 checkerboard relative flex items-center justify-center p-4 overflow-hidden h-[48vh] md:h-auto shrink-0 border-b md:border-b-0 md:border-r border-slate-800">
             <div class="relative h-full max-h-full flex items-center justify-center shadow-2xl rounded-2xl overflow-hidden bg-slate-900">
                 <canvas id="postCanvas" class="h-full w-auto max-w-full object-contain transition-all duration-300"></canvas>
             </div>
         </main>
 
-        <!-- Control Panel -->
         <aside class="w-full md:w-[420px] bg-slate-950 flex flex-col flex-1 overflow-hidden z-20">
-            <!-- Tabs -->
             <div class="grid grid-cols-3 border-b border-slate-800 bg-slate-900/80 p-1 text-xs font-medium shrink-0">
                 <button onclick="switchTab('content')" id="tabBtn-content" class="py-2.5 rounded-lg flex items-center justify-center gap-1.5 tab-btn-active">
                     <span class="text-base">📝</span>
@@ -187,10 +182,8 @@
                 </button>
             </div>
 
-            <!-- Panels -->
             <div class="flex-1 overflow-y-auto p-4 space-y-4" id="scrollContainer">
-                
-                <!-- TAB 1: CONTENT -->
+
                 <div id="tab-content" class="tab-content space-y-3">
                     <div>
                         <label class="text-xs font-semibold text-slate-300 mb-1 block">Main Quote / Card Text</label>
@@ -217,7 +210,6 @@
                     </div>
                 </div>
 
-                <!-- TAB 2: TEMPLATES -->
                 <div id="tab-templates" class="tab-content space-y-3 hidden">
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
                         <div class="flex items-center gap-2 mb-3">
@@ -283,7 +275,6 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: META -->
                 <div id="tab-meta" class="tab-content space-y-3 hidden">
                     <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
                         <div class="flex items-center justify-between">
@@ -326,8 +317,7 @@
                         <span class="font-semibold text-slate-300 block">Bottom Signature</span>
                         <input type="text" id="footerText" oninput="updatePostAndSave()" placeholder="@username // your-website.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white text-xs">
                     </div>
-                    
-                    <!-- DONATION SECTION -->
+
                     <div id="donateSection" class="bg-gradient-to-br from-amber-900/20 to-amber-800/10 p-4 rounded-xl border border-amber-700/30 space-y-3">
                         <div class="flex items-center gap-2 text-amber-300 font-semibold text-xs">
                             <span class="text-lg coffee-emoji">☕</span>
@@ -337,7 +327,7 @@
                         <p class="text-[10px] text-slate-400 leading-relaxed">
                             If OmniPost saves you time or sparks creativity, consider buying me a coffee. It helps keep this tool free and open for everyone.
                         </p>
-                        
+
                         <div class="donation-grid">
                             <a href="https://www.buymeacoffee.com/john0ogletree" target="_blank" rel="noopener noreferrer" class="full-width donate-btn w-full text-center text-white text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 shadow-lg shadow-amber-600/20">
                                 <span>☕</span>
@@ -359,13 +349,13 @@
                                 <span>🏦</span> Chime
                             </a>
                         </div>
-                        
+
                         <div id="chimeTagContainer" class="hidden bg-slate-800/60 p-2 rounded-lg border border-blue-500/30 text-center transition-all">
                             <span class="text-[9px] text-slate-400">Chime Tag:</span>
                             <span class="text-[10px] font-mono text-blue-300 font-semibold select-all">$john0ogletree</span>
                             <span class="text-[8px] text-slate-500 ml-2">(click to copy)</span>
                         </div>
-                        
+
                         <div class="text-[8px] text-slate-500 text-center pt-1 border-t border-slate-800/50">
                             💛 100% of donations go to supporting development
                         </div>
@@ -404,6 +394,7 @@
         </aside>
     </div>
 
+    <script src="theme-engine.js"></script>
     <script>
         (function() {
             const state = {
@@ -423,97 +414,10 @@
 
             const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-            // ============ TEMPLATES ============
-            const templates = {
-                minimal:    { bg: '#0a0a12', card: '#14141e', text: '#e8e8f0', accent: '#3b82f6' },
-                vibrant:    { bg: '#1a0a2e', card: '#2d1b4e', text: '#f0e6ff', accent: '#ec4899' },
-                dark:       { bg: '#000000', card: '#0d0d0d', text: '#e5e5e5', accent: '#6366f1' },
-                ocean:      { bg: '#0a1628', card: '#0d2137', text: '#d4edff', accent: '#06b6d4' },
-                sunset:     { bg: '#1a0e08', card: '#2d1a0e', text: '#ffe8d4', accent: '#f97316' },
-                cyberpunk:  { bg: '#0a001a', card: '#1a0033', text: '#f0e6ff', accent: '#ec4899' },
-                remembrance:{ bg: '#1c1917', card: '#292524', text: '#e7e5e4', accent: '#a8a29e' }
-            };
-
-            // Emoji labels for toast feedback
-            const templateEmojis = {
-                minimal: '⚪',
-                vibrant: '🌈',
-                dark: '🌑',
-                ocean: '🌊',
-                sunset: '🌅',
-                cyberpunk: '⚡',
-                remembrance: '🕊️'
-            };
-
-            // ============ SHUFFLE / RANDOM THEME ============
-            let lastTemplate = null;
-
-            function pickRandomTheme() {
-                const keys = Object.keys(templates);
-                // Anti-repeat: don't pick the same as last time
-                let pool = keys.filter(k => k !== lastTemplate);
-                if (pool.length === 0) pool = keys; // fallback
-                const chosen = pool[Math.floor(Math.random() * pool.length)];
-                lastTemplate = chosen;
-                return chosen;
-            }
-
-            function applyTheme(type, options = {}) {
-                const t = templates[type];
-                if (!t) return;
-                document.getElementById('bgBaseColor').value = t.bg;
-                document.getElementById('cardBgColor').value = t.card;
-                document.getElementById('textColor').value = t.text;
-                document.getElementById('accentColor').value = t.accent;
-                updatePost();
-                if (!options.silent) {
-                    const emoji = templateEmojis[type] || '🎨';
-                    const label = type.charAt(0).toUpperCase() + type.slice(1);
-                    showToast(`${emoji} Theme: ${label}`);
-                }
-            }
-
-            window.shuffleTheme = function() {
-                // Spin the icon
-                const icon = document.getElementById('shuffleIcon');
-                icon.classList.remove('shuffle-spin');
-                void icon.offsetWidth; // force reflow
-                icon.classList.add('shuffle-spin');
-
-                const chosen = pickRandomTheme();
-                applyTheme(chosen);
-                saveTheme(chosen);
-                saveToStorage();
-            };
-
-            window.loadTemplate = function(type) {
-                applyTheme(type);
-                lastTemplate = type;
-                saveTheme(type);
-                saveToStorage();
-            };
-
-            // ============ THEME PERSISTENCE ============
-            function saveTheme(type) {
-                try { localStorage.setItem('omnipost_theme', type); } catch(e) {}
-            }
-            function loadTheme() {
-                try { return localStorage.getItem('omnipost_theme'); } catch(e) { return null; }
-            }
-
-            // ============ COLOR CHANGE (manual) ============
-            window.updatePostAndSaveColors = function() {
-                updatePost();
-                // Mark theme as "custom" since user tweaked colors manually
-                saveTheme('custom');
-                saveToStorage();
-            };
-
-            // ============ COPY CHIME TAG ============
-            window.copyChimeTag = function() {
+            function copyChimeTag() {
                 const container = document.getElementById('chimeTagContainer');
                 const tag = '$john0ogletree';
-                
+
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(tag).then(() => {
                         showToast('📋 Chime tag copied: ' + tag);
@@ -523,13 +427,13 @@
                 } else {
                     fallbackCopy(tag);
                 }
-                
+
                 container.classList.remove('hidden');
                 clearTimeout(window.chimeTimeout);
                 window.chimeTimeout = setTimeout(() => {
                     container.classList.add('hidden');
                 }, 8000);
-            };
+            }
 
             function fallbackCopy(text) {
                 const textarea = document.createElement('textarea');
@@ -547,7 +451,6 @@
                 document.body.removeChild(textarea);
             }
 
-            // ============ DATE FORMAT HELPERS ============
             function getTodayDate(format) {
                 const now = new Date();
                 const year = now.getFullYear();
@@ -555,7 +458,7 @@
                 const day = String(now.getDate()).padStart(2, '0');
                 const monthShort = MONTHS_SHORT[now.getMonth()];
                 const dayNum = now.getDate();
-                
+
                 const formats = {
                     'DD.MM.YYYY': `${day}.${month}.${year}`,
                     'MM.DD.YYYY': `${month}.${day}.${year}`,
@@ -573,7 +476,7 @@
                 const monthNum = String(month).padStart(2, '0');
                 const dayNum = String(day).padStart(2, '0');
                 const monthShort = MONTHS_SHORT[month - 1];
-                
+
                 const formats = {
                     'DD.MM.YYYY': `${dayNum}.${monthNum}.${year}`,
                     'MM.DD.YYYY': `${monthNum}.${dayNum}.${year}`,
@@ -587,7 +490,7 @@
                 return formats[format] || formats['DD.MM.YYYY'];
             }
 
-            window.formatDate = function() {
+            function formatDate() {
                 const format = document.getElementById('dateFormat').value;
                 const dateInput = document.getElementById('tagDate');
                 if (dateInput.value === '') {
@@ -605,7 +508,7 @@
                 }
                 updatePost();
                 saveToStorage();
-            };
+            }
 
             function parseDate(str) {
                 let parts = str.match(/^(\d{2})[.\/](\d{2})[.\/](\d{4})$/);
@@ -625,7 +528,6 @@
                 return null;
             }
 
-            // ============ LOCAL STORAGE ============
             function saveToStorage() {
                 try {
                     const data = {
@@ -641,7 +543,7 @@
                     };
                     localStorage.setItem('omnipost_user_data', JSON.stringify(data));
                     document.getElementById('storageStatus').textContent = '💾 saved';
-                } catch (e) { /* ignore */ }
+                } catch (e) { }
             }
 
             function loadFromStorage() {
@@ -665,27 +567,26 @@
                 } catch (e) { return false; }
             }
 
-            window.clearStoredData = function() {
+            function clearStoredData() {
                 localStorage.removeItem('omnipost_user_data');
-                localStorage.removeItem('omnipost_theme');
+                themeEngine.clearTheme();
+
                 document.getElementById('tagHandle').value = '';
                 document.getElementById('footerText').value = '';
                 document.getElementById('tagDate').value = '';
                 document.getElementById('dateFormat').value = 'DD.MM.YYYY';
                 document.getElementById('storageStatus').textContent = '🗑️ cleared';
-                // Apply a fresh random theme
-                const chosen = pickRandomTheme();
-                applyTheme(chosen, { silent: true });
-                saveTheme(chosen);
-                showToast('🧹 Cleared — rolled a fresh theme');
-            };
 
-            window.updatePostAndSave = function() {
+                const chosen = themeEngine.shuffle();
+                themeEngine.saveTheme(chosen);
+                showToast('🧹 Cleared — rolled a fresh theme');
+            }
+
+            function updatePostAndSave() {
                 updatePost();
                 saveToStorage();
-            };
+            }
 
-            // ============ QUOTES ============
             const quotes = [
                 "Walls don't talk, but they definitely listen",
                 "The only way out is through",
@@ -699,14 +600,13 @@
                 "The best time to start was yesterday. The next best is now."
             ];
 
-            window.loadRandomQuote = function() {
+            function loadRandomQuote() {
                 const random = quotes[Math.floor(Math.random() * quotes.length)];
                 document.getElementById('quoteText').value = random;
                 updatePost();
                 showToast('🔀 Random quote loaded!');
-            };
+            }
 
-            // ============ TOAST ============
             function showToast(msg) {
                 const existing = document.querySelector('.toast-message');
                 if (existing) existing.remove();
@@ -717,7 +617,6 @@
                 setTimeout(() => toast.remove(), 2500);
             }
 
-            // ============ RENDER ============
             function drawRoundedPath(ctx, x, y, w, h, r) {
                 ctx.beginPath();
                 ctx.moveTo(x + r, y);
@@ -743,13 +642,13 @@
                         if (currentLine) { lines.push(currentLine); currentLine = ''; }
                         let subWord = '';
                         for (let char of word) {
-                            if (ctx.measureText(subWord + char).width <= maxW) { subWord += char; } 
+                            if (ctx.measureText(subWord + char).width <= maxW) { subWord += char; }
                             else { lines.push(subWord); subWord = char; }
                         }
                         if (subWord) currentLine = subWord;
                     } else {
                         const testLine = currentLine ? currentLine + ' ' + word : word;
-                        if (ctx.measureText(testLine).width <= maxW) { currentLine = testLine; } 
+                        if (ctx.measureText(testLine).width <= maxW) { currentLine = testLine; }
                         else { lines.push(currentLine); currentLine = word; }
                     }
                 });
@@ -777,7 +676,7 @@
                 ctx.restore();
             }
 
-            window.updatePost = function() {
+            function updatePost() {
                 state.quoteText = document.getElementById('quoteText').value;
                 state.bgBaseColor = document.getElementById('bgBaseColor').value;
                 state.cardBgColor = document.getElementById('cardBgColor').value;
@@ -870,19 +769,17 @@
                 ctx.textBaseline = 'middle';
                 ctx.fillText(state.footerText || '@username // your-website.com', w / 2, cardY + cardH + 110);
                 ctx.restore();
-            };
+            }
 
-            // ============ DATE SYNC ============
-            window.loadLiveDateTime = function() {
+            function loadLiveDateTime() {
                 const format = document.getElementById('dateFormat').value;
                 document.getElementById('tagDate').value = getTodayDate(format);
                 updatePost();
                 saveToStorage();
                 showToast('📅 Date synced with today!');
-            };
+            }
 
-            // ============ TAB SWITCHING ============
-            window.switchTab = function(tabName) {
+            function switchTab(tabName) {
                 document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
                 document.getElementById(`tab-${tabName}`).classList.remove('hidden');
                 ['content', 'templates', 'meta'].forEach(id => {
@@ -893,10 +790,9 @@
                         btn.className = "py-2.5 rounded-lg flex items-center justify-center gap-1.5 tab-btn-inactive";
                     }
                 });
-            };
+            }
 
-            // ============ EXPORT ============
-            window.exportImage = function() {
+            function exportImage() {
                 updatePost();
                 const now = new Date();
                 const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
@@ -908,36 +804,67 @@
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
                 showToast(`⬇️ Saved as "${finalName}.png"`);
-            };
+            }
 
-            // ============ INIT ============
+            const themeEngine = createThemeEngine({
+                colorInputs: {
+                    bg:     document.getElementById('bgBaseColor'),
+                    card:   document.getElementById('cardBgColor'),
+                    text:   document.getElementById('textColor'),
+                    accent: document.getElementById('accentColor'),
+                },
+                onChange: () => updatePost(),
+                onToast:  (msg) => showToast(msg),
+            });
+
+            function shuffleTheme() {
+                const icon = document.getElementById('shuffleIcon');
+                icon.classList.remove('shuffle-spin');
+                void icon.offsetWidth;
+                icon.classList.add('shuffle-spin');
+                themeEngine.shuffle();
+                saveToStorage();
+            }
+
+            function loadTemplate(type) {
+                themeEngine.load(type);
+                saveToStorage();
+            }
+
+            function updatePostAndSaveColors() {
+                themeEngine.markCustom();
+                saveToStorage();
+            }
+
+            window.shuffleTheme = shuffleTheme;
+            window.loadTemplate = loadTemplate;
+            window.updatePostAndSaveColors = updatePostAndSaveColors;
+            window.updatePost = updatePost;
+            window.updatePostAndSave = updatePostAndSave;
+            window.loadRandomQuote = loadRandomQuote;
+            window.loadLiveDateTime = loadLiveDateTime;
+            window.switchTab = switchTab;
+            window.exportImage = exportImage;
+            window.clearStoredData = clearStoredData;
+            window.copyChimeTag = copyChimeTag;
+            window.formatDate = formatDate;
+
             window.addEventListener('DOMContentLoaded', () => {
                 const hadSavedData = loadFromStorage();
-                const savedTheme = loadTheme();
 
                 const dateInput = document.getElementById('tagDate');
                 if (!dateInput.value) {
                     dateInput.value = getTodayDate(document.getElementById('dateFormat').value);
                 }
 
-                // THEME LOGIC
-                if (savedTheme && savedTheme !== 'custom' && templates[savedTheme]) {
-                    // User has a known saved theme — restore it silently
-                    lastTemplate = savedTheme;
-                    applyTheme(savedTheme, { silent: true });
-                } else if (savedTheme === 'custom' && hadSavedData) {
-                    // User manually tweaked colors — keep them (loaded from storage)
-                    // Just refresh the canvas
+                const result = themeEngine.init();
+
+                if (result.source === 'custom' && hadSavedData) {
                     updatePost();
-                } else {
-                    // First visit (or cleared) — roll a random theme
-                    const chosen = pickRandomTheme();
-                    applyTheme(chosen, { silent: true });
-                    saveTheme(chosen);
-                    // Friendly first-visit toast (delayed a touch so it feels intentional)
+                } else if (result.source === 'random') {
                     setTimeout(() => {
-                        const emoji = templateEmojis[chosen] || '🎨';
-                        const label = chosen.charAt(0).toUpperCase() + chosen.slice(1);
+                        const emoji = themeEngine.getEmoji(result.theme);
+                        const label = themeEngine.labelFor(result.theme);
                         showToast(`${emoji} Welcome! Rolled: ${label}`);
                     }, 600);
                 }
@@ -948,7 +875,6 @@
                 document.getElementById('footerText').addEventListener('input', saveToStorage);
                 document.getElementById('dateFormat').addEventListener('change', saveToStorage);
 
-                // Keyboard shortcut: press "R" to shuffle (when not typing in a field)
                 document.addEventListener('keydown', (e) => {
                     const tag = (e.target.tagName || '').toLowerCase();
                     if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
