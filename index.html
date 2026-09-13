@@ -109,6 +109,8 @@
         .chime-color:hover { background: #1a75ff; box-shadow: 0 0 25px rgba(0, 102, 255, 0.3); }
         .gofundme-color { background: #00b37e; color: #fff; }
         .gofundme-color:hover { background: #00cc8f; box-shadow: 0 0 25px rgba(0, 179, 126, 0.3); }
+        .paypal-color { background: #0070ba; color: #fff; }
+        .paypal-color:hover { background: #0085dd; box-shadow: 0 0 25px rgba(0, 112, 186, 0.3); }
         .donation-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -334,6 +336,9 @@
                                 <span>☕</span>
                                 Buy me a coffee
                             </a>
+                            <a href="https://www.paypal.me/John0ogletree" target="_blank" rel="noopener noreferrer" class="donate-btn-small paypal-color text-[9px] font-semibold px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-blue-500/20">
+                                <span>🅿️</span> PayPal
+                            </a>
                             <a href="https://github.com/sponsors/john-ogletree" target="_blank" rel="noopener noreferrer" class="donate-btn-small bg-slate-800 hover:bg-slate-700 text-slate-300 text-[9px] font-medium px-3 py-2 rounded-lg transition-colors border border-slate-700 flex items-center justify-center gap-1.5">
                                 <span>🐙</span> GitHub
                             </a>
@@ -414,7 +419,6 @@
 
             const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-            // ============ THEME ENGINE ============
             const TEMPLATES = {
                 minimal:     { bg: '#0a0a12', card: '#14141e', text: '#e8e8f0', accent: '#3b82f6' },
                 vibrant:     { bg: '#1a0a2e', card: '#2d1b4e', text: '#f0e6ff', accent: '#ec4899' },
@@ -507,7 +511,6 @@
                 saveToStorage();
             }
 
-            // ============ COPY CHIME TAG ============
             function copyChimeTag() {
                 const container = document.getElementById('chimeTagContainer');
                 const tag = '$john0ogletree';
@@ -545,7 +548,6 @@
                 document.body.removeChild(textarea);
             }
 
-            // ============ DATE HELPERS ============
             function getTodayDate(format) {
                 const now = new Date();
                 const year = now.getFullYear();
@@ -623,7 +625,6 @@
                 return null;
             }
 
-            // ============ LOCAL STORAGE ============
             function saveToStorage() {
                 try {
                     const data = {
@@ -684,7 +685,6 @@
                 saveToStorage();
             }
 
-            // ============ QUOTES ============
             const quotes = [
                 "Walls don't talk, but they definitely listen",
                 "The only way out is through",
@@ -705,7 +705,6 @@
                 showToast('🔀 Random quote loaded!');
             }
 
-            // ============ TOAST ============
             function showToast(msg) {
                 const existing = document.querySelector('.toast-message');
                 if (existing) existing.remove();
@@ -716,7 +715,6 @@
                 setTimeout(() => toast.remove(), 2500);
             }
 
-            // ============ RENDER ============
             function drawRoundedPath(ctx, x, y, w, h, r) {
                 ctx.beginPath();
                 ctx.moveTo(x + r, y);
@@ -871,7 +869,6 @@
                 ctx.restore();
             }
 
-            // ============ DATE SYNC ============
             function loadLiveDateTime() {
                 const format = document.getElementById('dateFormat').value;
                 document.getElementById('tagDate').value = getTodayDate(format);
@@ -880,7 +877,6 @@
                 showToast('📅 Date synced with today!');
             }
 
-            // ============ TABS ============
             function switchTab(tabName) {
                 document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
                 document.getElementById(`tab-${tabName}`).classList.remove('hidden');
@@ -894,7 +890,6 @@
                 });
             }
 
-            // ============ EXPORT ============
             function exportImage() {
                 updatePost();
                 const now = new Date();
@@ -909,7 +904,6 @@
                 showToast(`⬇️ Saved as "${finalName}.png"`);
             }
 
-            // ============ GLOBAL EXPORTS ============
             window.shuffleTheme = shuffleTheme;
             window.loadTemplate = loadTemplate;
             window.updatePostAndSaveColors = updatePostAndSaveColors;
@@ -923,7 +917,6 @@
             window.copyChimeTag = copyChimeTag;
             window.formatDate = formatDate;
 
-            // ============ INIT ============
             window.addEventListener('DOMContentLoaded', () => {
                 const hadSavedData = loadFromStorage();
                 const savedTheme = loadTheme();
