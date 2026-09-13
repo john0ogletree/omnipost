@@ -395,7 +395,6 @@
         </aside>
     </div>
 
-    <script src="theme-engine.js"></script>
     <script>
         (function() {
             const state = {
@@ -415,6 +414,100 @@
 
             const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+            // ============ THEME ENGINE ============
+            const TEMPLATES = {
+                minimal:     { bg: '#0a0a12', card: '#14141e', text: '#e8e8f0', accent: '#3b82f6' },
+                vibrant:     { bg: '#1a0a2e', card: '#2d1b4e', text: '#f0e6ff', accent: '#ec4899' },
+                dark:        { bg: '#000000', card: '#0d0d0d', text: '#e5e5e5', accent: '#6366f1' },
+                ocean:       { bg: '#0a1628', card: '#0d2137', text: '#d4edff', accent: '#06b6d4' },
+                sunset:      { bg: '#1a0e08', card: '#2d1a0e', text: '#ffe8d4', accent: '#f97316' },
+                cyberpunk:   { bg: '#0a001a', card: '#1a0033', text: '#f0e6ff', accent: '#ec4899' },
+                remembrance: { bg: '#1c1917', card: '#292524', text: '#e7e5e4', accent: '#a8a29e' }
+            };
+
+            const TEMPLATE_EMOJIS = {
+                minimal: '⚪',
+                vibrant: '🌈',
+                dark: '🌑',
+                ocean: '🌊',
+                sunset: '🌅',
+                cyberpunk: '⚡',
+                remembrance: '🕊️'
+            };
+
+            const THEME_STORAGE_KEY = 'omnipost_theme';
+            const THEME_CUSTOM = 'custom';
+
+            let lastTemplate = null;
+
+            function saveTheme(type) {
+                try { localStorage.setItem(THEME_STORAGE_KEY, type); } catch (e) {}
+            }
+
+            function loadTheme() {
+                try { return localStorage.getItem(THEME_STORAGE_KEY); } catch (e) { return null; }
+            }
+
+            function clearTheme() {
+                try { localStorage.removeItem(THEME_STORAGE_KEY); } catch (e) {}
+            }
+
+            function pickRandomTheme() {
+                const keys = Object.keys(TEMPLATES);
+                let pool = keys.filter(k => k !== lastTemplate);
+                if (pool.length === 0) pool = keys;
+                const chosen = pool[Math.floor(Math.random() * pool.length)];
+                lastTemplate = chosen;
+                return chosen;
+            }
+
+            function writeColorsToDOM(t) {
+                document.getElementById('bgBaseColor').value = t.bg;
+                document.getElementById('cardBgColor').value = t.card;
+                document.getElementById('textColor').value = t.text;
+                document.getElementById('accentColor').value = t.accent;
+            }
+
+            function applyTheme(type, options) {
+                const o = options || {};
+                const t = TEMPLATES[type];
+                if (!t) return false;
+                writeColorsToDOM(t);
+                lastTemplate = type;
+                updatePost();
+                if (!o.silent) {
+                    const emoji = TEMPLATE_EMOJIS[type] || '🎨';
+                    const label = type.charAt(0).toUpperCase() + type.slice(1);
+                    showToast(`${emoji} Theme: ${label}`);
+                }
+                return true;
+            }
+
+            function shuffleTheme() {
+                const icon = document.getElementById('shuffleIcon');
+                icon.classList.remove('shuffle-spin');
+                void icon.offsetWidth;
+                icon.classList.add('shuffle-spin');
+
+                const chosen = pickRandomTheme();
+                applyTheme(chosen);
+                saveTheme(chosen);
+                saveToStorage();
+            }
+
+            function loadTemplate(type) {
+                if (!applyTheme(type)) return;
+                saveTheme(type);
+                saveToStorage();
+            }
+
+            function updatePostAndSaveColors() {
+                saveTheme(THEME_CUSTOM);
+                updatePost();
+                saveToStorage();
+            }
+
+            // ============ COPY CHIME TAG ============
             function copyChimeTag() {
                 const container = document.getElementById('chimeTagContainer');
                 const tag = '$john0ogletree';
@@ -452,6 +545,7 @@
                 document.body.removeChild(textarea);
             }
 
+            // ============ DATE HELPERS ============
             function getTodayDate(format) {
                 const now = new Date();
                 const year = now.getFullYear();
@@ -529,6 +623,7 @@
                 return null;
             }
 
+            // ============ LOCAL STORAGE ============
             function saveToStorage() {
                 try {
                     const data = {
@@ -570,7 +665,7 @@
 
             function clearStoredData() {
                 localStorage.removeItem('omnipost_user_data');
-                themeEngine.clearTheme();
+                clearTheme();
 
                 document.getElementById('tagHandle').value = '';
                 document.getElementById('footerText').value = '';
@@ -578,8 +673,9 @@
                 document.getElementById('dateFormat').value = 'DD.MM.YYYY';
                 document.getElementById('storageStatus').textContent = '🗑️ cleared';
 
-                const chosen = themeEngine.shuffle();
-                themeEngine.saveTheme(chosen);
+                const chosen = pickRandomTheme();
+                applyTheme(chosen, { silent: true });
+                saveTheme(chosen);
                 showToast('🧹 Cleared — rolled a fresh theme');
             }
 
@@ -588,6 +684,7 @@
                 saveToStorage();
             }
 
+            // ============ QUOTES ============
             const quotes = [
                 "Walls don't talk, but they definitely listen",
                 "The only way out is through",
@@ -608,6 +705,7 @@
                 showToast('🔀 Random quote loaded!');
             }
 
+            // ============ TOAST ============
             function showToast(msg) {
                 const existing = document.querySelector('.toast-message');
                 if (existing) existing.remove();
@@ -618,6 +716,7 @@
                 setTimeout(() => toast.remove(), 2500);
             }
 
+            // ============ RENDER ============
             function drawRoundedPath(ctx, x, y, w, h, r) {
                 ctx.beginPath();
                 ctx.moveTo(x + r, y);
@@ -772,6 +871,7 @@
                 ctx.restore();
             }
 
+            // ============ DATE SYNC ============
             function loadLiveDateTime() {
                 const format = document.getElementById('dateFormat').value;
                 document.getElementById('tagDate').value = getTodayDate(format);
@@ -780,6 +880,7 @@
                 showToast('📅 Date synced with today!');
             }
 
+            // ============ TABS ============
             function switchTab(tabName) {
                 document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
                 document.getElementById(`tab-${tabName}`).classList.remove('hidden');
@@ -793,6 +894,7 @@
                 });
             }
 
+            // ============ EXPORT ============
             function exportImage() {
                 updatePost();
                 const now = new Date();
@@ -807,36 +909,7 @@
                 showToast(`⬇️ Saved as "${finalName}.png"`);
             }
 
-            const themeEngine = createThemeEngine({
-                colorInputs: {
-                    bg:     document.getElementById('bgBaseColor'),
-                    card:   document.getElementById('cardBgColor'),
-                    text:   document.getElementById('textColor'),
-                    accent: document.getElementById('accentColor'),
-                },
-                onChange: () => updatePost(),
-                onToast:  (msg) => showToast(msg),
-            });
-
-            function shuffleTheme() {
-                const icon = document.getElementById('shuffleIcon');
-                icon.classList.remove('shuffle-spin');
-                void icon.offsetWidth;
-                icon.classList.add('shuffle-spin');
-                themeEngine.shuffle();
-                saveToStorage();
-            }
-
-            function loadTemplate(type) {
-                themeEngine.load(type);
-                saveToStorage();
-            }
-
-            function updatePostAndSaveColors() {
-                themeEngine.markCustom();
-                saveToStorage();
-            }
-
+            // ============ GLOBAL EXPORTS ============
             window.shuffleTheme = shuffleTheme;
             window.loadTemplate = loadTemplate;
             window.updatePostAndSaveColors = updatePostAndSaveColors;
@@ -850,22 +923,28 @@
             window.copyChimeTag = copyChimeTag;
             window.formatDate = formatDate;
 
+            // ============ INIT ============
             window.addEventListener('DOMContentLoaded', () => {
                 const hadSavedData = loadFromStorage();
+                const savedTheme = loadTheme();
 
                 const dateInput = document.getElementById('tagDate');
                 if (!dateInput.value) {
                     dateInput.value = getTodayDate(document.getElementById('dateFormat').value);
                 }
 
-                const result = themeEngine.init();
-
-                if (result.source === 'custom' && hadSavedData) {
+                if (savedTheme && savedTheme !== THEME_CUSTOM && TEMPLATES[savedTheme]) {
+                    lastTemplate = savedTheme;
+                    applyTheme(savedTheme, { silent: true });
+                } else if (savedTheme === THEME_CUSTOM && hadSavedData) {
                     updatePost();
-                } else if (result.source === 'random') {
+                } else {
+                    const chosen = pickRandomTheme();
+                    applyTheme(chosen, { silent: true });
+                    saveTheme(chosen);
                     setTimeout(() => {
-                        const emoji = themeEngine.getEmoji(result.theme);
-                        const label = themeEngine.labelFor(result.theme);
+                        const emoji = TEMPLATE_EMOJIS[chosen] || '🎨';
+                        const label = chosen.charAt(0).toUpperCase() + chosen.slice(1);
                         showToast(`${emoji} Welcome! Rolled: ${label}`);
                     }, 600);
                 }
