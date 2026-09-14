@@ -148,7 +148,28 @@
                         <textarea id="quoteText" rows="4" oninput="updatePost()" placeholder="Enter your quote here..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 focus:outline-none resize-none font-semibold"></textarea>
                     </div>
 
-                    <!-- CARD IMAGE -->
+                    <!-- CARD BACKGROUND IMAGE -->
+                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
+                        <span class="font-semibold text-slate-300 block">Card Background Image</span>
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span class="text-[10px] text-slate-500">Fills the card behind the text</span>
+                            <button id="clearCardBgImageBtn" onclick="clearCardBgImage()" class="hidden text-[10px] text-red-300 hover:text-red-200 bg-red-500/10 hover:bg-red-500/20 px-2 py-0.5 rounded-md border border-red-500/20 transition-colors">Remove</button>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <img id="cardBgImageThumb" class="upload-thumb hidden" alt="">
+                            <label class="upload-drop flex-1 flex items-center justify-center gap-2 bg-slate-950 rounded-lg px-3 py-2.5 cursor-pointer text-slate-400 hover:text-indigo-300 text-[11px]">
+                                <span>🖼️</span>
+                                <span id="cardBgImageLabel">Upload card background…</span>
+                                <input type="file" id="cardBgImageInput" accept="image/*" class="hidden">
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] text-slate-500">Overlay tint</span>
+                            <input type="range" id="cardBgOverlay" min="0" max="100" value="40" oninput="updatePost()" class="w-32 accent-indigo-500">
+                        </div>
+                    </div>
+
+                    <!-- CARD IMAGE (inline, above the text) -->
                     <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
                         <span class="font-semibold text-slate-300 block">Card Image</span>
                         <div class="flex items-center justify-between mb-0.5">
@@ -392,6 +413,7 @@
                 tagHandle: "",
                 footerText: "",
                 dateFormat: "DD.MM.YYYY",
+                cardBgImage: null,
                 cardImage: null
             };
 
@@ -492,7 +514,7 @@
                 saveToStorage();
             }
 
-            // ============ CARD IMAGE UPLOAD ============
+            // ============ IMAGE UPLOADS ============
             function handleImageUpload(file, onLoaded) {
                 if (!file || !file.type.startsWith('image/')) {
                     showToast('⚠️ Please choose an image file');
@@ -507,6 +529,35 @@
                 };
                 reader.onerror = () => showToast('⚠️ Could not read file');
                 reader.readAsDataURL(file);
+            }
+
+            function setupCardBgImageUpload() {
+                const input = document.getElementById('cardBgImageInput');
+                input.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    handleImageUpload(file, (img, dataUrl) => {
+                        state.cardBgImage = img;
+                        const thumb = document.getElementById('cardBgImageThumb');
+                        thumb.src = dataUrl;
+                        thumb.classList.remove('hidden');
+                        document.getElementById('cardBgImageLabel').textContent = file.name.length > 20 ? file.name.slice(0, 17) + '…' : file.name;
+                        document.getElementById('clearCardBgImageBtn').classList.remove('hidden');
+                        updatePost();
+                        showToast('🖼️ Card background loaded');
+                    });
+                    input.value = '';
+                });
+            }
+
+            function clearCardBgImage() {
+                state.cardBgImage = null;
+                document.getElementById('cardBgImageInput').value = '';
+                document.getElementById('cardBgImageThumb').classList.add('hidden');
+                document.getElementById('cardBgImageLabel').textContent = 'Upload card background…';
+                document.getElementById('clearCardBgImageBtn').classList.add('hidden');
+                updatePost();
+                showToast('🖼️ Card background removed');
             }
 
             function setupCardImageUpload() {
@@ -538,7 +589,24 @@
                 showToast('🖼️ Card image removed');
             }
 
-            // Fit image inside a box (contain), return drawn dimensions + centered position
+            function drawCoverImage(ctx, img, x, y, w, h) {
+                const imgRatio = img.width / img.height;
+                const boxRatio = w / h;
+                let drawW, drawH, drawX, drawY;
+                if (imgRatio > boxRatio) {
+                    drawH = h;
+                    drawW = h * imgRatio;
+                    drawX = x + (w - drawW) / 2;
+                    drawY = y;
+                } else {
+                    drawW = w;
+                    drawH = w / imgRatio;
+                    drawX = x;
+                    drawY = y + (h - drawH) / 2;
+                }
+                ctx.drawImage(img, drawX, drawY, drawW, drawH);
+            }
+
             function fitContain(img, boxW, boxH) {
                 const ratio = img.width / img.height;
                 let drawW, drawH;
@@ -835,6 +903,7 @@
                 const cardW = 840, cardH = 1080;
                 const cardX = (w - cardW) / 2, cardY = (h - cardH) / 2 - 10;
 
+                // Card shadow + base fill
                 ctx.save();
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
                 ctx.shadowBlur = 60;
@@ -842,11 +911,27 @@
                 drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 64, state.cardBgColor);
                 ctx.restore();
 
+                // Card background image (clipped to rounded rect) with optional overlay tint
+                if (state.cardBgImage) {
+                    ctx.save();
+                    drawRoundedPath(ctx, cardX, cardY, cardW, cardH, 64);
+                    ctx.clip();
+                    drawCoverImage(ctx, state.cardBgImage, cardX, cardY, cardW, cardH);
+                    const overlay = parseInt(document.getElementById('cardBgOverlay').value, 10) / 100;
+                    if (overlay > 0) {
+                        ctx.globalAlpha = overlay;
+                        ctx.fillStyle = state.cardBgColor;
+                        ctx.fillRect(cardX, cardY, cardW, cardH);
+                        ctx.globalAlpha = 1;
+                    }
+                    ctx.restore();
+                }
+
                 const sidePad = 70;
                 const contentX = cardX + sidePad;
                 const contentW = cardW - sidePad * 2;
 
-                // --- Card image at top of card (if present) ---
+                // Card image (inline, above quote)
                 let imageBlockHeight = 0;
                 const imageGap = 50;
                 if (state.cardImage) {
@@ -863,7 +948,7 @@
                     imageBlockHeight = topPad + fit.h + imageGap;
                 }
 
-                // --- Quote text (auto-fit in remaining space) ---
+                // Quote text auto-fit in remaining space
                 const textAreaTop = cardY + imageBlockHeight;
                 const textAreaH = cardH - imageBlockHeight;
                 const textAreaCenterY = textAreaTop + textAreaH / 2;
@@ -983,12 +1068,14 @@
             window.clearStoredData = clearStoredData;
             window.copyChimeTag = copyChimeTag;
             window.formatDate = formatDate;
+            window.clearCardBgImage = clearCardBgImage;
             window.clearCardImage = clearCardImage;
 
             window.addEventListener('DOMContentLoaded', () => {
                 const hadSavedData = loadFromStorage();
                 const savedTheme = loadTheme();
 
+                setupCardBgImageUpload();
                 setupCardImageUpload();
 
                 const dateInput = document.getElementById('tagDate');
