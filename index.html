@@ -41,34 +41,11 @@
             cursor: pointer; outline: none;
         }
         .date-format-select:focus { border-color: #6366f1; }
-        .donate-btn {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            transition: all 0.2s;
-        }
-        .donate-btn:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(245, 158, 11, 0.3); }
-        .donate-btn:active { transform: scale(0.97); }
-        .donate-btn-small { transition: all 0.2s; }
-        .donate-btn-small:hover { transform: scale(1.03); }
-        .donate-btn-small:active { transform: scale(0.95); }
         .coffee-emoji { display: inline-block; animation: steam 2s ease-in-out infinite; }
         @keyframes steam {
             0%, 100% { transform: rotate(0deg) scale(1); }
             50% { transform: rotate(-5deg) scale(1.1); }
         }
-        .cashapp-color { background: #00d632; color: #000; }
-        .cashapp-color:hover { background: #00e63a; box-shadow: 0 0 25px rgba(0, 214, 50, 0.3); }
-        .venmo-color { background: #008CFF; color: #fff; }
-        .venmo-color:hover { background: #1a9aff; box-shadow: 0 0 25px rgba(0, 140, 255, 0.3); }
-        .chime-color { background: #0066ff; color: #fff; }
-        .chime-color:hover { background: #1a75ff; box-shadow: 0 0 25px rgba(0, 102, 255, 0.3); }
-        .gofundme-color { background: #00b37e; color: #fff; }
-        .gofundme-color:hover { background: #00cc8f; box-shadow: 0 0 25px rgba(0, 179, 126, 0.3); }
-        .paypal-color { background: #0070ba; color: #fff; }
-        .paypal-color:hover { background: #0085dd; box-shadow: 0 0 25px rgba(0, 112, 186, 0.3); }
-        .donation-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-        }
-        .donation-grid .full-width { grid-column: 1 / -1; }
         .shuffle-btn { transition: all 0.2s; }
         .shuffle-btn:hover { background: #334155; transform: scale(1.05); }
         .shuffle-btn:active { transform: scale(0.9) rotate(180deg); }
@@ -104,10 +81,6 @@
             <button onclick="shuffleTheme()" id="shuffleBtn" class="shuffle-btn text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5" title="Random theme">
                 <span id="shuffleIcon" class="text-base leading-none">🎲</span>
                 <span>Shuffle</span>
-            </button>
-            <button onclick="document.getElementById('donateSection').scrollIntoView({behavior:'smooth'})" class="text-[10px] bg-amber-600/20 text-amber-300 hover:bg-amber-600/30 px-3 py-1.5 rounded-lg transition-all border border-amber-600/20 flex items-center gap-1.5">
-                <span class="coffee-emoji">☕</span>
-                <span>Support</span>
             </button>
             <button onclick="exportImage()" class="bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-indigo-600/30 transition-all">
                 <span class="text-base leading-none">⬇</span>
@@ -320,52 +293,6 @@
                     <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
                         <span class="font-semibold text-slate-300 block">Bottom Signature</span>
                         <input type="text" id="footerText" oninput="updatePostAndSave()" placeholder="@username // your-website.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white text-xs">
-                    </div>
-
-                    <div id="donateSection" class="bg-gradient-to-br from-amber-900/20 to-amber-800/10 p-4 rounded-xl border border-amber-700/30 space-y-3">
-                        <div class="flex items-center gap-2 text-amber-300 font-semibold text-xs">
-                            <span class="text-lg coffee-emoji">☕</span>
-                            <span>Support OmniPost</span>
-                            <span class="ml-auto text-[9px] font-normal text-amber-400/60 bg-amber-400/10 px-2 py-0.5 rounded-full">❤️ open source</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 leading-relaxed">
-                            If OmniPost saves you time or sparks creativity, consider buying me a coffee. It helps keep this tool free and open for everyone.
-                        </p>
-
-                        <div class="donation-grid">
-                            <a href="https://www.buymeacoffee.com/john0ogletree" target="_blank" rel="noopener noreferrer" class="full-width donate-btn w-full text-center text-white text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 shadow-lg shadow-amber-600/20">
-                                <span>☕</span>
-                                Buy me a coffee
-                            </a>
-                            <a href="https://www.paypal.me/john0ogletree" target="_blank" rel="noopener noreferrer" class="donate-btn-small paypal-color text-[9px] font-semibold px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-blue-500/20">
-                                <span>🅿️</span> PayPal
-                            </a>
-                            <a href="https://github.com/sponsors/john0ogletree" target="_blank" rel="noopener noreferrer" class="donate-btn-small bg-slate-800 hover:bg-slate-700 text-slate-300 text-[9px] font-medium px-3 py-2 rounded-lg transition-colors border border-slate-700 flex items-center justify-center gap-1.5">
-                                <span>🐙</span> GitHub
-                            </a>
-                            <a href="https://gofundme.com/u/john0ogletree" target="_blank" rel="noopener noreferrer" class="donate-btn-small gofundme-color text-[9px] font-medium px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20">
-                                <span>🎗️</span> GoFundMe
-                            </a>
-                            <a href="https://venmo.com/john0ogletree" target="_blank" rel="noopener noreferrer" class="donate-btn-small venmo-color text-[9px] font-medium px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-blue-600/20">
-                                <span>💳</span> Venmo
-                            </a>
-                            <a href="https://cash.app/$john0ogletree" target="_blank" rel="noopener noreferrer" class="donate-btn-small cashapp-color text-[9px] font-bold px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-green-600/20">
-                                <span>💰</span> Cash App
-                            </a>
-                            <a href="#" onclick="copyChimeTag(); return false;" class="donate-btn-small chime-color text-[9px] font-medium px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-blue-600/20 cursor-pointer">
-                                <span>🏦</span> Chime
-                            </a>
-                        </div>
-
-                        <div id="chimeTagContainer" class="hidden bg-slate-800/60 p-2 rounded-lg border border-blue-500/30 text-center transition-all">
-                            <span class="text-[9px] text-slate-400">Chime Tag:</span>
-                            <span class="text-[10px] font-mono text-blue-300 font-semibold select-all">$john0ogletree</span>
-                            <span class="text-[8px] text-slate-500 ml-2">(click to copy)</span>
-                        </div>
-
-                        <div class="text-[8px] text-slate-500 text-center pt-1 border-t border-slate-800/50">
-                            💛 100% of donations go to supporting development
-                        </div>
                     </div>
 
                     <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/60 text-xs space-y-3">
@@ -620,43 +547,6 @@
                 return { w: drawW, h: drawH };
             }
 
-            function copyChimeTag() {
-                const container = document.getElementById('chimeTagContainer');
-                const tag = '$john0ogletree';
-
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(tag).then(() => {
-                        showToast('📋 Chime tag copied: ' + tag);
-                    }).catch(() => {
-                        fallbackCopy(tag);
-                    });
-                } else {
-                    fallbackCopy(tag);
-                }
-
-                container.classList.remove('hidden');
-                clearTimeout(window.chimeTimeout);
-                window.chimeTimeout = setTimeout(() => {
-                    container.classList.add('hidden');
-                }, 8000);
-            }
-
-            function fallbackCopy(text) {
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
-                document.body.appendChild(textarea);
-                textarea.select();
-                try {
-                    document.execCommand('copy');
-                    showToast('📋 Chime tag copied: ' + text);
-                } catch (err) {
-                    showToast('📋 Chime tag: ' + text + ' (copy manually)');
-                }
-                document.body.removeChild(textarea);
-            }
-
             function getTodayDate(format) {
                 const now = new Date();
                 const year = now.getFullYear();
@@ -903,7 +793,6 @@
                 const cardW = 840, cardH = 1080;
                 const cardX = (w - cardW) / 2, cardY = (h - cardH) / 2 - 10;
 
-                // Card shadow + base fill
                 ctx.save();
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
                 ctx.shadowBlur = 60;
@@ -911,7 +800,6 @@
                 drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 64, state.cardBgColor);
                 ctx.restore();
 
-                // Card background image (clipped to rounded rect) with optional overlay tint
                 if (state.cardBgImage) {
                     ctx.save();
                     drawRoundedPath(ctx, cardX, cardY, cardW, cardH, 64);
@@ -930,7 +818,6 @@
                 const sidePad = 70;
                 const contentW = cardW - sidePad * 2;
 
-                // Card image (inline, above quote)
                 let imageBlockHeight = 0;
                 const imageGap = 50;
                 if (state.cardImage) {
@@ -947,7 +834,6 @@
                     imageBlockHeight = topPad + fit.h + imageGap;
                 }
 
-                // Quote text auto-fit in remaining space
                 const textAreaTop = cardY + imageBlockHeight;
                 const textAreaH = cardH - imageBlockHeight;
                 const textAreaCenterY = textAreaTop + textAreaH / 2;
@@ -1065,7 +951,6 @@
             window.switchTab = switchTab;
             window.exportImage = exportImage;
             window.clearStoredData = clearStoredData;
-            window.copyChimeTag = copyChimeTag;
             window.formatDate = formatDate;
             window.clearCardBgImage = clearCardBgImage;
             window.clearCardImage = clearCardImage;
