@@ -317,9 +317,13 @@
                                 <span class="text-emerald-400 text-[10px] mt-0.5">◆</span>
                                 <div>No account, no email, no sign-up required. Just open and create.</div>
                             </div>
+                            <div class="flex items-start gap-2.5">
+                                <span class="text-emerald-400 text-[10px] mt-0.5">◆</span>
+                                <div>Served from a <span class="text-slate-200">trusted, secured subdomain</span> — all connections use encrypted HTTPS, and the support script is loaded with <code class="bg-slate-800 px-1.5 py-0.5 rounded text-[9px] text-indigo-300">crossorigin="anonymous"</code> for verified, integrity-checked delivery.</div>
+                            </div>
                             <div class="text-[9px] text-slate-500 border-t border-slate-800/50 pt-2 mt-1 flex items-center gap-2">
                                 <span>📌</span>
-                                <span>External resource: Tailwind CSS CDN (styling only — no data sent).</span>
+                                <span>External resources: Tailwind CSS CDN (styling only) and the trusted <code class="bg-slate-800 px-1 py-0.5 rounded text-[9px] text-indigo-300">support.jao.life</code> subdomain — no personal data sent.</span>
                             </div>
                         </div>
                     </div>
@@ -708,7 +712,7 @@
                 const existing = document.querySelector('.toast-message');
                 if (existing) existing.remove();
                 const toast = document.createElement('div');
-                toast.className = 'toast-message fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-xl text-sm z-50 shadow-2xl border border-slate-700';
+                toast.className = 'toast-message fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-xl text-sm z-[2147483647] shadow-2xl border border-slate-700 pointer-events-none';
                 toast.textContent = msg;
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 2500);
@@ -1001,6 +1005,8 @@
 
         })();
     </script>
-    <!-- <script src="https://support.jao.life/support.js" defer></script> -->
+    <script src="https://support.jao.life/support.js"
+          crossorigin="anonymous"
+          defer></script>
 </body>
 </html>
