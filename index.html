@@ -1,276 +1,797 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OmniPost · Community Templates</title>
     <link rel="icon" type="image/svg+xml" href="logo.svg">
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* ============================================================
+           RESET
+           ============================================================ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+        input, textarea, select { font: inherit; color: inherit; }
+        img { display: block; max-width: 100%; }
+        canvas { display: block; }
+
+        /* ============================================================
+           BASE
+           ============================================================ */
+        :root {
+            --slate-950: #020617;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-600: #475569;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-300: #cbd5e1;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --indigo-700: #4338ca;
+            --indigo-600: #4f46e5;
+            --indigo-500: #6366f1;
+            --indigo-400: #818cf8;
+            --indigo-300: #a5b4fc;
+            --emerald-400: #34d399;
+            --red-500: #ef4444;
+            --red-300: #fca5a5;
+            --red-200: #fecaca;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background: var(--slate-950);
+            color: var(--slate-100);
+            overflow: hidden;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+        }
+
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.4); }
         ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.6); border-radius: 9999px; }
-        .checkerboard {
-            background-color: #050810;
-            background-image: linear-gradient(45deg, #0f172a 25%, transparent 25%), linear-gradient(-45deg, #0f172a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #0f172a 75%), linear-gradient(-45deg, transparent 75%, #0f172a 75%);
-            background-size: 24px 24px;
-        }
+
+        ::placeholder { color: var(--slate-600); opacity: 0.6; }
+
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 0.5rem; }
-        body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        .tab-btn-active { background: #1e293b; color: #818cf8; font-weight: 600; }
-        .tab-btn-inactive { color: #94a3b8; }
-        .tab-btn-inactive:hover { color: #e2e8f0; }
-        .template-preview { transition: all 0.2s; cursor: pointer; }
-        .template-preview:hover { transform: scale(1.05); border-color: #818cf8; }
-        .template-preview:active { transform: scale(0.95); }
-        ::placeholder { color: #475569; opacity: 0.6; }
-        .toast-message { animation: fadeSlide 0.25s ease-out; }
-        @keyframes fadeSlide {
-            0% { opacity: 0; transform: translate(-50%, 20px); }
-            100% { opacity: 1; transform: translate(-50%, 0); }
+        select option { background: var(--slate-900); color: var(--slate-200); }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .app-header {
+            height: 48px;
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--slate-800);
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 30;
         }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .app-title { font-size: 14px; font-weight: 600; color: var(--slate-300); letter-spacing: -0.01em; }
         .storage-badge {
-            background: #1e293b; color: #94a3b8; font-size: 9px;
-            padding: 2px 8px; border-radius: 9999px; border: 1px solid #334155;
+            background: var(--slate-800);
+            color: var(--slate-400);
+            font-size: 9px;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            border: 1px solid var(--slate-700);
         }
-        select option { background: #0f172a; color: #e2e8f0; }
-        .date-format-select {
-            background: #0f172a; color: #e2e8f0; border: 1px solid #1e293b;
-            border-radius: 6px; padding: 2px 6px; font-size: 10px;
-            cursor: pointer; outline: none;
+        .header-right { display: flex; align-items: center; gap: 8px; }
+
+        .shuffle-btn {
+            font-size: 10px;
+            background: var(--slate-800);
+            color: var(--slate-300);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--slate-700);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
         }
-        .date-format-select:focus { border-color: #6366f1; }
-        .coffee-emoji { display: inline-block; animation: steam 2s ease-in-out infinite; }
-        @keyframes steam {
-            0%, 100% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(-5deg) scale(1.1); }
-        }
-        .shuffle-btn { transition: all 0.2s; }
-        .shuffle-btn:hover { background: #334155; transform: scale(1.05); }
+        .shuffle-btn:hover { background: var(--slate-700); }
         .shuffle-btn:active { transform: scale(0.9) rotate(180deg); }
+        #shuffleIcon { font-size: 16px; line-height: 1; display: inline-block; }
+
         @keyframes shuffle-spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
         .shuffle-spin { animation: shuffle-spin 0.5s ease-out; }
 
+        .export-btn {
+            background: var(--indigo-600);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+            transition: all 0.15s;
+        }
+        .export-btn:hover { background: var(--indigo-500); }
+        .export-btn:active { background: var(--indigo-700); }
+        .export-btn .icon { font-size: 16px; line-height: 1; }
+
+        /* ============================================================
+           LAYOUT
+           ============================================================ */
+        .app-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .preview-pane {
+            width: 100%;
+            height: 48vh;
+            flex-shrink: 0;
+            background: var(--slate-950);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            overflow: hidden;
+            border-bottom: 1px solid var(--slate-800);
+        }
+        .checkerboard {
+            background-color: #050810;
+            background-image:
+                linear-gradient(45deg, #0f172a 25%, transparent 25%),
+                linear-gradient(-45deg, #0f172a 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #0f172a 75%),
+                linear-gradient(-45deg, transparent 75%, #0f172a 75%);
+            background-size: 24px 24px;
+        }
+        .canvas-wrap {
+            position: relative;
+            height: 100%;
+            max-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--slate-900);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        #postCanvas {
+            height: 100%;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            transition: all 0.3s;
+        }
+
+        .sidebar {
+            width: 100%;
+            flex: 1;
+            background: var(--slate-950);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 20;
+        }
+
+        /* ============================================================
+           TABS
+           ============================================================ */
+        .tab-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-bottom: 1px solid var(--slate-800);
+            background: rgba(15, 23, 42, 0.8);
+            padding: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        .tab-btn {
+            padding: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .tab-btn .emoji { font-size: 16px; }
+        .tab-btn-active { background: var(--slate-800); color: var(--indigo-400); font-weight: 600; }
+        .tab-btn-inactive { color: var(--slate-400); }
+        .tab-btn-inactive:hover { color: var(--slate-200); }
+
+        /* ============================================================
+           SCROLL AREA
+           ============================================================ */
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        .tab-content { display: flex; flex-direction: column; gap: 12px; }
+        .tab-content.hidden { display: none; }
+
+        .field-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--slate-300);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .quote-textarea {
+            width: 100%;
+            background: var(--slate-900);
+            border: 1px solid var(--slate-800);
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+            color: #fff;
+            resize: none;
+            font-weight: 600;
+            outline: none;
+        }
+        .quote-textarea:focus { border-color: var(--indigo-500); }
+
+        .panel {
+            background: var(--slate-900);
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--slate-800);
+            font-size: 12px;
+        }
+        .panel-stack { display: flex; flex-direction: column; gap: 12px; }
+
+        .panel-title { font-weight: 600; color: var(--slate-300); display: block; }
+
+        .row-between {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .row-center { display: flex; align-items: center; }
+
+        .hint { font-size: 10px; color: var(--slate-500); }
+        .hint-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+
+        .remove-btn {
+            font-size: 10px;
+            color: var(--red-300);
+            background: rgba(239, 68, 68, 0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            transition: all 0.15s;
+        }
+        .remove-btn:hover { color: var(--red-200); background: rgba(239, 68, 68, 0.2); }
+        .remove-btn.hidden { display: none; }
+
+        .upload-row { display: flex; align-items: center; gap: 12px; }
         .upload-drop {
-            border: 1.5px dashed #334155;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--slate-950);
+            border: 1.5px dashed var(--slate-700);
+            border-radius: 8px;
+            padding: 10px 12px;
+            cursor: pointer;
+            color: var(--slate-400);
+            font-size: 11px;
             transition: all 0.15s;
         }
         .upload-drop:hover {
-            border-color: #6366f1;
+            border-color: var(--indigo-500);
             background: rgba(99, 102, 241, 0.05);
+            color: var(--indigo-300);
         }
         .upload-thumb {
-            width: 36px; height: 36px;
-            border-radius: 6px; object-fit: cover;
-            border: 1px solid #334155; background: #0f172a;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid var(--slate-700);
+            background: var(--slate-900);
+        }
+        .upload-thumb.hidden { display: none; }
+
+        input[type="range"] { width: 128px; accent-color: var(--indigo-500); }
+
+        .slider-row { display: flex; align-items: center; justify-content: space-between; }
+
+        .color-row { display: flex; align-items: center; justify-content: space-between; }
+        .color-row span { color: var(--slate-300); }
+        input[type="color"] {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            cursor: pointer;
+            border: none;
+        }
+
+        .divider-note {
+            font-size: 10px;
+            color: var(--slate-500);
+            text-align: center;
+            padding-top: 8px;
+            border-top: 1px solid rgba(30, 41, 59, 0.7);
+        }
+
+        /* ============================================================
+           TEMPLATES TAB
+           ============================================================ */
+        .templates-panel {
+            background: var(--slate-900);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--slate-800);
+        }
+        .templates-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .templates-header .emoji { font-size: 20px; }
+        .templates-header .title { font-weight: 600; font-size: 14px; }
+        .templates-header .note { font-size: 10px; color: var(--slate-500); margin-left: auto; }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .template-preview {
+            background: var(--slate-800);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--slate-700);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .template-preview:hover { transform: scale(1.05); border-color: var(--indigo-400); }
+        .template-preview:active { transform: scale(0.95); }
+        .template-swatch {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+        }
+        .template-swatch span {
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .template-label {
+            padding: 8px;
+            font-size: 9px;
+            color: var(--slate-400);
+            text-align: center;
+        }
+
+        .tpl-minimal { background: linear-gradient(to bottom, #334155, #0f172a); color: var(--slate-400); }
+        .tpl-minimal span { background: rgba(30, 41, 59, 0.8); }
+        .tpl-vibrant { background: linear-gradient(to bottom, #9333ea, #db2777); color: #fff; }
+        .tpl-vibrant span { background: rgba(0,0,0,0.3); }
+        .tpl-dark { background: linear-gradient(to bottom, #0f172a, #000); color: var(--slate-400); }
+        .tpl-dark span { background: rgba(30, 41, 59, 0.8); }
+        .tpl-ocean { background: linear-gradient(to bottom, #164e63, #1e3a8a); color: #fff; }
+        .tpl-ocean span { background: rgba(0,0,0,0.3); }
+        .tpl-sunset { background: linear-gradient(to bottom, #9a3412, #78350f); color: #fff; }
+        .tpl-sunset span { background: rgba(0,0,0,0.3); }
+        .tpl-cyberpunk { background: linear-gradient(to bottom, #831843, #164e63); color: #fff; }
+        .tpl-cyberpunk span { background: rgba(0,0,0,0.3); }
+        .tpl-remembrance { background: linear-gradient(to bottom, #57534e, #44403c 50%, #1c1917); color: #e7e5e4; }
+        .tpl-remembrance span { background: rgba(0,0,0,0.4); }
+
+        .templates-footer {
+            margin-top: 12px;
+            font-size: 10px;
+            color: var(--slate-500);
+            text-align: center;
+            border-top: 1px solid var(--slate-800);
+            padding-top: 12px;
+        }
+
+        .stack-btns { display: flex; flex-direction: column; gap: 8px; }
+        .btn-secondary {
+            width: 100%;
+            background: var(--slate-800);
+            color: var(--slate-200);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid var(--slate-700);
+            transition: background 0.15s;
+        }
+        .btn-secondary:hover { background: var(--slate-700); }
+        .btn-secondary .emoji { font-size: 16px; }
+
+        .btn-random {
+            width: 100%;
+            background: rgba(79, 70, 229, 0.2);
+            color: var(--indigo-300);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        .btn-random:hover { background: rgba(79, 70, 229, 0.3); }
+        .btn-random .emoji { font-size: 16px; }
+
+        /* ============================================================
+           HEADER TAB (meta)
+           ============================================================ */
+        .meta-title {
+            font-weight: 600;
+            color: var(--indigo-400);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .meta-title .emoji { font-size: 16px; }
+
+        .meta-actions { display: flex; align-items: center; gap: 6px; }
+        .btn-sync {
+            font-size: 10px;
+            background: rgba(79, 70, 229, 0.2);
+            color: var(--indigo-300);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.15s;
+        }
+        .btn-sync:hover { background: rgba(79, 70, 229, 0.3); }
+        .btn-clear {
+            font-size: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--red-300);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            transition: all 0.15s;
+        }
+        .btn-clear:hover { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .meta-field-label { font-size: 10px; color: var(--slate-400); display: block; margin-bottom: 4px; }
+        .date-format-select {
+            background: var(--slate-950);
+            color: var(--slate-200);
+            border: 1px solid var(--slate-800);
+            border-radius: 6px;
+            padding: 2px 6px;
+            font-size: 10px;
+            cursor: pointer;
+            outline: none;
+        }
+        .date-format-select:focus { border-color: var(--indigo-500); }
+
+        .text-input {
+            width: 100%;
+            background: var(--slate-950);
+            border: 1px solid var(--slate-800);
+            border-radius: 8px;
+            padding: 6px 10px;
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+        }
+        .text-input:focus { border-color: var(--indigo-500); }
+
+        .date-label-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        /* ============================================================
+           PRIVACY PANEL
+           ============================================================ */
+        .privacy-panel {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(30, 41, 59, 0.6);
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .privacy-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--slate-300);
+            font-weight: 600;
+        }
+        .privacy-badge {
+            margin-left: auto;
+            font-size: 9px;
+            font-weight: 400;
+            color: var(--emerald-400);
+            background: rgba(52, 211, 153, 0.1);
+            padding: 2px 8px;
+            border-radius: 9999px;
+        }
+        .privacy-list { display: flex; flex-direction: column; gap: 8px; color: var(--slate-400); line-height: 1.5; }
+        .privacy-item { display: flex; align-items: flex-start; gap: 10px; }
+        .privacy-bullet { color: var(--emerald-400); font-size: 10px; margin-top: 2px; }
+        .privacy-item code {
+            background: var(--slate-800);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            color: var(--indigo-300);
+        }
+        .privacy-item .em { color: var(--slate-200); }
+        .privacy-item .red { color: var(--red-300); }
+        .privacy-foot {
+            font-size: 9px;
+            color: var(--slate-500);
+            border-top: 1px solid rgba(30, 41, 59, 0.5);
+            padding-top: 8px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        .toast-message {
+            position: fixed;
+            bottom: 96px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--slate-800);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            z-index: 2147483647;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--slate-700);
+            pointer-events: none;
+            animation: fadeSlide 0.25s ease-out;
+            white-space: nowrap;
+        }
+        @keyframes fadeSlide {
+            0% { opacity: 0; transform: translate(-50%, 20px); }
+            100% { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        /* ============================================================
+           RESPONSIVE (md: 768px+)
+           ============================================================ */
+        @media (min-width: 768px) {
+            .app-body { flex-direction: row; }
+            .preview-pane {
+                flex: 1;
+                height: auto;
+                border-bottom: none;
+                border-right: 1px solid var(--slate-800);
+            }
+            .sidebar { width: 420px; flex: none; }
         }
     </style>
 </head>
-<body class="h-full font-sans antialiased flex flex-col overflow-hidden select-none">
+<body>
 
-    <header class="h-12 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md px-4 flex items-center justify-between z-30 shrink-0">
-        <div class="flex items-center gap-3">
-            <span class="text-sm font-semibold text-slate-300 tracking-tight">OmniPost</span>
+    <header class="app-header">
+        <div class="header-left">
+            <span class="app-title">OmniPost</span>
             <span class="storage-badge" id="storageStatus">💾 auto-save</span>
         </div>
-        <div class="flex items-center gap-2">
-            <button onclick="shuffleTheme()" id="shuffleBtn" class="shuffle-btn text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5" title="Random theme">
-                <span id="shuffleIcon" class="text-base leading-none">🎲</span>
+        <div class="header-right">
+            <button onclick="shuffleTheme()" id="shuffleBtn" class="shuffle-btn" title="Random theme">
+                <span id="shuffleIcon" class="icon">🎲</span>
                 <span>Shuffle</span>
             </button>
-            <button onclick="exportImage()" class="bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-indigo-600/30 transition-all">
-                <span class="text-base leading-none">⬇</span>
+            <button onclick="exportImage()" class="export-btn">
+                <span class="icon">⬇</span>
                 <span>Export</span>
             </button>
         </div>
     </header>
 
-    <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+    <div class="app-body">
 
-        <main class="w-full md:flex-1 bg-slate-950 checkerboard relative flex items-center justify-center p-4 overflow-hidden h-[48vh] md:h-auto shrink-0 border-b md:border-b-0 md:border-r border-slate-800">
-            <div class="relative h-full max-h-full flex items-center justify-center shadow-2xl rounded-2xl overflow-hidden bg-slate-900">
-                <canvas id="postCanvas" class="h-full w-auto max-w-full object-contain transition-all duration-300"></canvas>
+        <main class="preview-pane checkerboard">
+            <div class="canvas-wrap">
+                <canvas id="postCanvas"></canvas>
             </div>
         </main>
 
-        <aside class="w-full md:w-[420px] bg-slate-950 flex flex-col flex-1 overflow-hidden z-20">
-            <div class="grid grid-cols-3 border-b border-slate-800 bg-slate-900/80 p-1 text-xs font-medium shrink-0">
-                <button onclick="switchTab('content')" id="tabBtn-content" class="py-2.5 rounded-lg flex items-center justify-center gap-1.5 tab-btn-active">
-                    <span class="text-base">📝</span>
+        <aside class="sidebar">
+            <div class="tab-bar">
+                <button onclick="switchTab('content')" id="tabBtn-content" class="tab-btn tab-btn-active">
+                    <span class="emoji">📝</span>
                     <span>Quote</span>
                 </button>
-                <button onclick="switchTab('templates')" id="tabBtn-templates" class="py-2.5 rounded-lg flex items-center justify-center gap-1.5 tab-btn-inactive">
-                    <span class="text-base">🎨</span>
+                <button onclick="switchTab('templates')" id="tabBtn-templates" class="tab-btn tab-btn-inactive">
+                    <span class="emoji">🎨</span>
                     <span>Templates</span>
                 </button>
-                <button onclick="switchTab('meta')" id="tabBtn-meta" class="py-2.5 rounded-lg flex items-center justify-center gap-1.5 tab-btn-inactive">
-                    <span class="text-base">⚙️</span>
+                <button onclick="switchTab('meta')" id="tabBtn-meta" class="tab-btn tab-btn-inactive">
+                    <span class="emoji">⚙️</span>
                     <span>Header</span>
                 </button>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-4 space-y-4" id="scrollContainer">
+            <div class="scroll-area" id="scrollContainer">
 
-                <div id="tab-content" class="tab-content space-y-3">
+                <div id="tab-content" class="tab-content">
                     <div>
-                        <label class="text-xs font-semibold text-slate-300 mb-1 block">Main Quote / Card Text</label>
-                        <textarea id="quoteText" rows="4" oninput="updatePost()" placeholder="Enter your quote here..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-indigo-500 focus:outline-none resize-none font-semibold"></textarea>
+                        <label class="field-label">Main Quote / Card Text</label>
+                        <textarea id="quoteText" rows="4" oninput="updatePost()" placeholder="Enter your quote here..." class="quote-textarea"></textarea>
                     </div>
 
                     <!-- CARD BACKGROUND IMAGE -->
-                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
-                        <span class="font-semibold text-slate-300 block">Card Background Image</span>
-                        <div class="flex items-center justify-between mb-0.5">
-                            <span class="text-[10px] text-slate-500">Fills the card behind the text</span>
-                            <button id="clearCardBgImageBtn" onclick="clearCardBgImage()" class="hidden text-[10px] text-red-300 hover:text-red-200 bg-red-500/10 hover:bg-red-500/20 px-2 py-0.5 rounded-md border border-red-500/20 transition-colors">Remove</button>
+                    <div class="panel panel-stack">
+                        <span class="panel-title">Card Background Image</span>
+                        <div class="hint-row">
+                            <span class="hint">Fills the card behind the text</span>
+                            <button id="clearCardBgImageBtn" onclick="clearCardBgImage()" class="remove-btn hidden">Remove</button>
                         </div>
-                        <div class="flex items-center gap-3">
+                        <div class="upload-row">
                             <img id="cardBgImageThumb" class="upload-thumb hidden" alt="">
-                            <label class="upload-drop flex-1 flex items-center justify-center gap-2 bg-slate-950 rounded-lg px-3 py-2.5 cursor-pointer text-slate-400 hover:text-indigo-300 text-[11px]">
+                            <label class="upload-drop">
                                 <span>🖼️</span>
                                 <span id="cardBgImageLabel">Upload card background…</span>
-                                <input type="file" id="cardBgImageInput" accept="image/*" class="hidden">
+                                <input type="file" id="cardBgImageInput" accept="image/*" style="display:none">
                             </label>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-[10px] text-slate-500">Overlay tint</span>
-                            <input type="range" id="cardBgOverlay" min="0" max="100" value="40" oninput="updatePost()" class="w-32 accent-indigo-500">
+                        <div class="slider-row">
+                            <span class="hint">Overlay tint</span>
+                            <input type="range" id="cardBgOverlay" min="0" max="100" value="40" oninput="updatePost()">
                         </div>
                     </div>
 
-                    <!-- CARD IMAGE (inline, above the text) -->
-                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
-                        <span class="font-semibold text-slate-300 block">Card Image</span>
-                        <div class="flex items-center justify-between mb-0.5">
-                            <span class="text-[10px] text-slate-500">Image shown inside the card, above the quote</span>
-                            <button id="clearCardImageBtn" onclick="clearCardImage()" class="hidden text-[10px] text-red-300 hover:text-red-200 bg-red-500/10 hover:bg-red-500/20 px-2 py-0.5 rounded-md border border-red-500/20 transition-colors">Remove</button>
+                    <!-- CARD IMAGE -->
+                    <div class="panel panel-stack">
+                        <span class="panel-title">Card Image</span>
+                        <div class="hint-row">
+                            <span class="hint">Image shown inside the card, above the quote</span>
+                            <button id="clearCardImageBtn" onclick="clearCardImage()" class="remove-btn hidden">Remove</button>
                         </div>
-                        <div class="flex items-center gap-3">
+                        <div class="upload-row">
                             <img id="cardImageThumb" class="upload-thumb hidden" alt="">
-                            <label class="upload-drop flex-1 flex items-center justify-center gap-2 bg-slate-950 rounded-lg px-3 py-2.5 cursor-pointer text-slate-400 hover:text-indigo-300 text-[11px]">
+                            <label class="upload-drop">
                                 <span>🖼️</span>
                                 <span id="cardImageLabel">Upload card image…</span>
-                                <input type="file" id="cardImageInput" accept="image/*" class="hidden">
+                                <input type="file" id="cardImageInput" accept="image/*" style="display:none">
                             </label>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-[10px] text-slate-500">Max height</span>
-                            <input type="range" id="cardImageSize" min="120" max="500" value="260" oninput="updatePost()" class="w-32 accent-indigo-500">
+                        <div class="slider-row">
+                            <span class="hint">Max height</span>
+                            <input type="range" id="cardImageSize" min="120" max="500" value="260" oninput="updatePost()">
                         </div>
-                        <div class="text-[10px] text-slate-500 text-center pt-2 border-t border-slate-800/70">
-                            🔒 Uploads stay in memory only — cleared on reload
-                        </div>
+                        <div class="divider-note">🔒 Uploads stay in memory only — cleared on reload</div>
                     </div>
 
-                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
-                        <span class="font-semibold text-slate-300 block">Theme & Color Customization</span>
-                        <div class="flex items-center justify-between">
-                            <span class="text-slate-300">Background Color</span>
-                            <input type="color" id="bgBaseColor" value="#04060a" onchange="updatePostAndSaveColors()" class="w-8 h-8 bg-transparent cursor-pointer">
+                    <div class="panel panel-stack">
+                        <span class="panel-title">Theme &amp; Color Customization</span>
+                        <div class="color-row">
+                            <span>Background Color</span>
+                            <input type="color" id="bgBaseColor" value="#04060a" onchange="updatePostAndSaveColors()">
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-slate-300">Card Box Color</span>
-                            <input type="color" id="cardBgColor" value="#0d111c" onchange="updatePostAndSaveColors()" class="w-8 h-8 bg-transparent cursor-pointer">
+                        <div class="color-row">
+                            <span>Card Box Color</span>
+                            <input type="color" id="cardBgColor" value="#0d111c" onchange="updatePostAndSaveColors()">
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-slate-300">Text Color</span>
-                            <input type="color" id="textColor" value="#ffffff" onchange="updatePostAndSaveColors()" class="w-8 h-8 bg-transparent cursor-pointer">
+                        <div class="color-row">
+                            <span>Text Color</span>
+                            <input type="color" id="textColor" value="#ffffff" onchange="updatePostAndSaveColors()">
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-slate-300">Accent Pill Color</span>
-                            <input type="color" id="accentColor" value="#2563eb" onchange="updatePostAndSaveColors()" class="w-8 h-8 bg-transparent cursor-pointer">
+                        <div class="color-row">
+                            <span>Accent Pill Color</span>
+                            <input type="color" id="accentColor" value="#2563eb" onchange="updatePostAndSaveColors()">
                         </div>
                     </div>
                 </div>
 
-                <div id="tab-templates" class="tab-content space-y-3 hidden">
-                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="text-xl">🎨</span>
-                            <span class="font-semibold text-sm">Community Templates</span>
-                            <span class="text-[10px] text-slate-500 ml-auto">Click to apply</span>
+                <div id="tab-templates" class="tab-content hidden">
+                    <div class="templates-panel">
+                        <div class="templates-header">
+                            <span class="emoji">🎨</span>
+                            <span class="title">Community Templates</span>
+                            <span class="note">Click to apply</span>
                         </div>
-                        <div class="grid grid-cols-3 gap-3">
-                            <div onclick="loadTemplate('minimal')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-indigo-400">
-                                <div class="h-16 bg-gradient-to-b from-slate-700 to-slate-900 flex items-center justify-center text-[8px] text-slate-400">
-                                    <span class="bg-slate-800/80 px-2 py-0.5 rounded">Minimal</span>
-                                </div>
-                                <div class="p-2 text-[9px] text-slate-400 text-center">Clean & Simple</div>
+                        <div class="template-grid">
+                            <div onclick="loadTemplate('minimal')" class="template-preview">
+                                <div class="template-swatch tpl-minimal"><span>Minimal</span></div>
+                                <div class="template-label">Clean &amp; Simple</div>
                             </div>
-                            <div onclick="loadTemplate('vibrant')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-purple-400">
-                                <div class="h-16 bg-gradient-to-b from-purple-600 to-pink-600 flex items-center justify-center text-[8px] text-white">
-                                    <span class="bg-black/30 px-2 py-0.5 rounded">Vibrant</span>
-                                </div>
-                                <div class="p-2 text-[9px] text-slate-400 text-center">Bold & Colorful</div>
+                            <div onclick="loadTemplate('vibrant')" class="template-preview">
+                                <div class="template-swatch tpl-vibrant"><span>Vibrant</span></div>
+                                <div class="template-label">Bold &amp; Colorful</div>
                             </div>
-                            <div onclick="loadTemplate('dark')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-slate-400">
-                                <div class="h-16 bg-gradient-to-b from-slate-900 to-black flex items-center justify-center text-[8px] text-slate-400">
-                                    <span class="bg-slate-800/80 px-2 py-0.5 rounded">Dark</span>
-                                </div>
-                                <div class="p-2 text-[9px] text-slate-400 text-center">Stealth Mode</div>
+                            <div onclick="loadTemplate('dark')" class="template-preview">
+                                <div class="template-swatch tpl-dark"><span>Dark</span></div>
+                                <div class="template-label">Stealth Mode</div>
                             </div>
-                            <div onclick="loadTemplate('ocean')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-cyan-400">
-                                <div class="h-16 bg-gradient-to-b from-cyan-900 to-blue-900 flex items-center justify-center text-[8px] text-white">
-                                    <span class="bg-black/30 px-2 py-0.5 rounded">Ocean</span>
-                                </div>
-                                <div class="p-2 text-[9px] text-slate-400 text-center">Deep Blue</div>
+                            <div onclick="loadTemplate('ocean')" class="template-preview">
+                                <div class="template-swatch tpl-ocean"><span>Ocean</span></div>
+                                <div class="template-label">Deep Blue</div>
                             </div>
-                            <div onclick="loadTemplate('sunset')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-orange-400">
-                                <div class="h-16 bg-gradient-to-b from-orange-800 to-amber-900 flex items-center justify-center text-[8px] text-white">
-                                    <span class="bg-black/30 px-2 py-0.5 rounded">Sunset</span>
-                                </div>
-                                <div class="p-2 text-[9px] text-slate-400 text-center">Warm Glow</div>
+                            <div onclick="loadTemplate('sunset')" class="template-preview">
+                                <div class="template-swatch tpl-sunset"><span>Sunset</span></div>
+                                <div class="template-label">Warm Glow</div>
                             </div>
-                            <div onclick="loadTemplate('cyberpunk')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-pink-400">
-                                <div class="h-16 bg-gradient-to-b from-pink-900 to-cyan-900 flex items-center justify-center text-[8px] text-white">
-                                    <span class="bg-black/30 px-2 py-0.5 rounded">Cyber</span>
-                                </div>
-                                <div class="p-2 text-[9px] text-slate-400 text-center">Neon Vibes</div>
+                            <div onclick="loadTemplate('cyberpunk')" class="template-preview">
+                                <div class="template-swatch tpl-cyberpunk"><span>Cyber</span></div>
+                                <div class="template-label">Neon Vibes</div>
                             </div>
-                            <div onclick="loadTemplate('remembrance')" class="template-preview bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 hover:border-stone-400">
-                                <div class="h-16 bg-gradient-to-b from-stone-600 via-stone-700 to-stone-900 flex items-center justify-center text-[8px] text-stone-200">
-                                    <span class="bg-black/40 px-2 py-0.5 rounded">🕊️ Remembrance</span>
-                                </div>
-                                <div class="p-2 text-[9px] text-slate-400 text-center">Honor & Memory</div>
+                            <div onclick="loadTemplate('remembrance')" class="template-preview">
+                                <div class="template-swatch tpl-remembrance"><span>🕊️ Remembrance</span></div>
+                                <div class="template-label">Honor &amp; Memory</div>
                             </div>
                         </div>
-                        <div class="mt-3 text-[10px] text-slate-500 text-center border-t border-slate-800 pt-3">
-                            💡 Templates will auto-update your colors
-                        </div>
+                        <div class="templates-footer">💡 Templates will auto-update your colors</div>
                     </div>
-                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                        <button onclick="shuffleTheme()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-lg text-xs font-medium transition flex items-center justify-center gap-2 border border-slate-700">
-                            <span class="text-base">🎲</span> Shuffle Theme
+                    <div class="panel stack-btns" style="margin-top:12px;">
+                        <button onclick="shuffleTheme()" class="btn-secondary">
+                            <span class="emoji">🎲</span> Shuffle Theme
                         </button>
-                        <button onclick="loadRandomQuote()" class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 px-4 py-2.5 rounded-lg text-xs font-medium transition flex items-center justify-center gap-2">
-                            <span class="text-base">🔀</span> Try Random Quote
+                        <button onclick="loadRandomQuote()" class="btn-random">
+                            <span class="emoji">🔀</span> Try Random Quote
                         </button>
                     </div>
                 </div>
 
-                <div id="tab-meta" class="tab-content space-y-3 hidden">
-                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
-                        <div class="flex items-center justify-between">
-                            <span class="font-semibold text-indigo-400 flex items-center gap-1.5">
-                                <span class="text-base">⚡</span> Header Controls
+                <div id="tab-meta" class="tab-content hidden">
+                    <div class="panel panel-stack">
+                        <div class="row-between">
+                            <span class="meta-title">
+                                <span class="emoji">⚡</span> Header Controls
                             </span>
-                            <div class="flex items-center gap-1.5">
-                                <button onclick="loadLiveDateTime()" class="text-[10px] bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/30 px-2.5 py-1 rounded-md font-medium transition-colors">
-                                    Sync Date
-                                </button>
-                                <button onclick="clearStoredData()" class="text-[10px] bg-red-500/10 text-red-300 hover:bg-red-500/20 px-2.5 py-1 rounded-md font-medium transition-colors border border-red-500/20 hover:border-red-500/40">
-                                    🗑️ Clear Saved
-                                </button>
+                            <div class="meta-actions">
+                                <button onclick="loadLiveDateTime()" class="btn-sync">Sync Date</button>
+                                <button onclick="clearStoredData()" class="btn-clear">🗑️ Clear Saved</button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="meta-grid">
                             <div>
-                                <div class="flex items-center justify-between mb-1">
-                                    <label class="text-[10px] text-slate-400">Date</label>
+                                <div class="date-label-row">
+                                    <label class="meta-field-label">Date</label>
                                     <select id="dateFormat" onchange="formatDate()" class="date-format-select">
                                         <option value="DD.MM.YYYY">DD.MM.YYYY</option>
                                         <option value="MM.DD.YYYY">MM.DD.YYYY</option>
@@ -282,48 +803,49 @@
                                         <option value="MMM DD">MMM DD</option>
                                     </select>
                                 </div>
-                                <input type="text" id="tagDate" oninput="updatePost()" placeholder="DD.MM.YYYY" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white text-xs">
+                                <input type="text" id="tagDate" oninput="updatePost()" placeholder="DD.MM.YYYY" class="text-input">
                             </div>
                             <div>
-                                <label class="text-[10px] text-slate-400 block mb-1">Top Handle</label>
-                                <input type="text" id="tagHandle" oninput="updatePostAndSave()" placeholder="@username" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white text-xs">
+                                <label class="meta-field-label">Top Handle</label>
+                                <input type="text" id="tagHandle" oninput="updatePostAndSave()" placeholder="@username" class="text-input">
                             </div>
                         </div>
-                    </div>
-                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-3 text-xs">
-                        <span class="font-semibold text-slate-300 block">Bottom Signature</span>
-                        <input type="text" id="footerText" oninput="updatePostAndSave()" placeholder="@username // your-website.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white text-xs">
                     </div>
 
-                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/60 text-xs space-y-3">
-                        <div class="flex items-center gap-2 text-slate-300 font-semibold">
-                            <span>🔒</span> Privacy & Data
-                            <span class="ml-auto text-[9px] font-normal text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">100% local</span>
+                    <div class="panel panel-stack">
+                        <span class="panel-title">Bottom Signature</span>
+                        <input type="text" id="footerText" oninput="updatePostAndSave()" placeholder="@username // your-website.com" class="text-input">
+                    </div>
+
+                    <div class="privacy-panel">
+                        <div class="privacy-head">
+                            <span>🔒</span> Privacy &amp; Data
+                            <span class="privacy-badge">100% local</span>
                         </div>
-                        <div class="space-y-2 text-slate-400 leading-relaxed">
-                            <div class="flex items-start gap-2.5">
-                                <span class="text-emerald-400 text-[10px] mt-0.5">◆</span>
-                                <div><span class="text-slate-200">All data stays in your browser</span> — nothing is ever sent to any server.</div>
+                        <div class="privacy-list">
+                            <div class="privacy-item">
+                                <span class="privacy-bullet">◆</span>
+                                <div><span class="em">All data stays in your browser</span> — nothing is ever sent to any server.</div>
                             </div>
-                            <div class="flex items-start gap-2.5">
-                                <span class="text-emerald-400 text-[10px] mt-0.5">◆</span>
-                                <div>Stored in <code class="bg-slate-800 px-1.5 py-0.5 rounded text-[9px] text-indigo-300">localStorage</code> on your device. No tracking, no cookies, no analytics.</div>
+                            <div class="privacy-item">
+                                <span class="privacy-bullet">◆</span>
+                                <div>Stored in <code>localStorage</code> on your device. No tracking, no cookies, no analytics.</div>
                             </div>
-                            <div class="flex items-start gap-2.5">
-                                <span class="text-emerald-400 text-[10px] mt-0.5">◆</span>
-                                <div>Clear all saved data anytime with the <span class="text-red-300">"Clear Saved"</span> button above.</div>
+                            <div class="privacy-item">
+                                <span class="privacy-bullet">◆</span>
+                                <div>Clear all saved data anytime with the <span class="red">"Clear Saved"</span> button above.</div>
                             </div>
-                            <div class="flex items-start gap-2.5">
-                                <span class="text-emerald-400 text-[10px] mt-0.5">◆</span>
+                            <div class="privacy-item">
+                                <span class="privacy-bullet">◆</span>
                                 <div>No account, no email, no sign-up required. Just open and create.</div>
                             </div>
-                            <div class="flex items-start gap-2.5">
-                                <span class="text-emerald-400 text-[10px] mt-0.5">◆</span>
-                                <div>Served from a <span class="text-slate-200">trusted, secured subdomain</span> — all connections use encrypted HTTPS, and the support script is loaded with <code class="bg-slate-800 px-1.5 py-0.5 rounded text-[9px] text-indigo-300">crossorigin="anonymous"</code> for verified, integrity-checked delivery.</div>
+                            <div class="privacy-item">
+                                <span class="privacy-bullet">◆</span>
+                                <div>Served from a <span class="em">trusted, secured subdomain</span> — all connections use encrypted HTTPS, and the support script is loaded with <code>crossorigin="anonymous"</code> for verified, integrity-checked delivery.</div>
                             </div>
-                            <div class="text-[9px] text-slate-500 border-t border-slate-800/50 pt-2 mt-1 flex items-center gap-2">
+                            <div class="privacy-foot">
                                 <span>📌</span>
-                                <span>External resources: Tailwind CSS CDN (styling only) and the trusted <code class="bg-slate-800 px-1 py-0.5 rounded text-[9px] text-indigo-300">support.jao.life</code> subdomain — no personal data sent.</span>
+                                <span>External resource: trusted <code>support.jao.life</code> subdomain — no personal data sent.</span>
                             </div>
                         </div>
                     </div>
@@ -712,7 +1234,7 @@
                 const existing = document.querySelector('.toast-message');
                 if (existing) existing.remove();
                 const toast = document.createElement('div');
-                toast.className = 'toast-message fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-xl text-sm z-[2147483647] shadow-2xl border border-slate-700 pointer-events-none';
+                toast.className = 'toast-message';
                 toast.textContent = msg;
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 2500);
@@ -924,9 +1446,9 @@
                 ['content', 'templates', 'meta'].forEach(id => {
                     const btn = document.getElementById(`tabBtn-${id}`);
                     if (id === tabName) {
-                        btn.className = "py-2.5 rounded-lg flex items-center justify-center gap-1.5 tab-btn-active";
+                        btn.className = "tab-btn tab-btn-active";
                     } else {
-                        btn.className = "py-2.5 rounded-lg flex items-center justify-center gap-1.5 tab-btn-inactive";
+                        btn.className = "tab-btn tab-btn-inactive";
                     }
                 });
             }
