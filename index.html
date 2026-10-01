@@ -898,6 +898,14 @@
             const THEME_STORAGE_KEY = 'omnipost_theme';
             const THEME_CUSTOM = 'custom';
 
+            // --- Text fitting constants (shared by fit loop + fallback) ---
+            const MIN_FONT_SIZE = 20;
+            const MAX_FONT_SIZE = 76;
+            const LINE_HEIGHT_RATIO = 1.25;
+            // Extra safety margin as a fraction of font size, applied to ink height.
+            // Accounts for font-specific ascender/descender variation.
+            const INK_SAFETY_RATIO = 0.10;
+
             let lastTemplate = null;
 
             function saveTheme(type) {
@@ -1299,6 +1307,51 @@
                 ctx.restore();
             }
 
+            // ---- Text fitting helper --------------------------------------
+            // Finds the largest font size (in 2px steps between MIN and MAX)
+            // whose *actual ink height* fits inside maxAllowedHeight.
+            //
+            // With textBaseline='middle', a rendered line's ink spans roughly
+            // `fontSize` vertically (half above the baseline-center, half below).
+            // The nominal block height `lines * lineHeight` therefore misses the
+            // top/bottom half-line overhang. We use:
+            //     inkHeight = (lines - 1) * lineHeight + fontSize
+            // plus a small per-font safety margin, to guarantee no clipping.
+            function fitQuoteText(text, maxWidth, maxAllowedHeight) {
+                const fontSizeFor = (s) => `800 ${s}px system-ui, -apple-system, sans-serif`;
+
+                let bestFontSize = MIN_FONT_SIZE;
+                let bestLines = [];
+                let bestLineHeight = 0;
+
+                for (let size = MIN_FONT_SIZE; size <= MAX_FONT_SIZE; size += 2) {
+                    ctx.font = fontSizeFor(size);
+                    const lines = getBulletproofLines(ctx, text, maxWidth);
+                    const lineHeight = size * LINE_HEIGHT_RATIO;
+                    const inkHeight = (lines.length - 1) * lineHeight + size;
+                    const safeInkHeight = inkHeight * (1 + INK_SAFETY_RATIO);
+
+                    if (safeInkHeight <= maxAllowedHeight) {
+                        bestFontSize = size;
+                        bestLines = lines;
+                        bestLineHeight = lineHeight;
+                    } else {
+                        break;
+                    }
+                }
+
+                // If even MIN didn't fit, clamp to MIN and accept the result
+                // (better to render tiny than to render nothing).
+                if (bestLines.length === 0) {
+                    bestFontSize = MIN_FONT_SIZE;
+                    ctx.font = fontSizeFor(bestFontSize);
+                    bestLines = getBulletproofLines(ctx, text, maxWidth);
+                    bestLineHeight = bestFontSize * LINE_HEIGHT_RATIO;
+                }
+
+                return { fontSize: bestFontSize, lines: bestLines, lineHeight: bestLineHeight };
+            }
+
             function updatePost() {
                 state.quoteText = document.getElementById('quoteText').value;
                 state.bgBaseColor = document.getElementById('bgBaseColor').value;
@@ -1366,10 +1419,6 @@
 
                 const maxAllowedWidth = contentW;
                 const maxAllowedHeight = textAreaH - 140;
-                let fontSize = 24;
-                const maxFontSize = 76;
-                let bestLines = [];
-                let bestLineHeight = 0;
 
                 if (state.quoteText.trim() === '') {
                     ctx.save();
@@ -1380,31 +1429,8 @@
                     ctx.fillText('Enter your quote above', w / 2, textAreaCenterY);
                     ctx.restore();
                 } else {
-                    while (fontSize <= maxFontSize) {
-                        ctx.font = `800 ${fontSize}px system-ui, -apple-system, sans-serif`;
-                        const testLines = getBulletproofLines(ctx, state.quoteText, maxAllowedWidth);
-                        const testLineHeight = fontSize * 1.25;
-                        const totalHeight = testLines.length * testLineHeight;
-                        if (totalHeight <= maxAllowedHeight) {
-                            bestLines = testLines;
-                            bestLineHeight = testLineHeight;
-                            fontSize += 2;
-                        } else {
-                            break;
-                        }
-                    }
-
-                    if (bestLines.length === 0) {
-                        fontSize = 24;
-                        ctx.font = `800 ${fontSize}px system-ui, -apple-system, sans-serif`;
-                        bestLines = getBulletproofLines(ctx, state.quoteText, maxAllowedWidth);
-                        bestLineHeight = fontSize * 1.25;
-                    } else {
-                        fontSize -= 2;
-                        ctx.font = `800 ${fontSize}px system-ui, -apple-system, sans-serif`;
-                        bestLines = getBulletproofLines(ctx, state.quoteText, maxAllowedWidth);
-                        bestLineHeight = fontSize * 1.25;
-                    }
+                    const fitted = fitQuoteText(state.quoteText, maxAllowedWidth, maxAllowedHeight);
+                    const { fontSize, lines, lineHeight } = fitted;
 
                     ctx.save();
                     ctx.font = `800 ${fontSize}px system-ui, -apple-system, sans-serif`;
@@ -1412,11 +1438,11 @@
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
 
-                    const totalTextHeight = bestLines.length * bestLineHeight;
+                    const totalTextHeight = lines.length * lineHeight;
                     let startY = textAreaCenterY - (totalTextHeight / 2);
 
-                    bestLines.forEach((line, index) => {
-                        ctx.fillText(line, w / 2, startY + (index * bestLineHeight) + (bestLineHeight / 2));
+                    lines.forEach((line, index) => {
+                        ctx.fillText(line, w / 2, startY + (index * lineHeight) + (lineHeight / 2));
                     });
                     ctx.restore();
                 }
