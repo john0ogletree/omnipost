@@ -1081,31 +1081,27 @@
                 return { w: drawW, h: drawH };
             }
 
+            // ============ DATE HANDLING ============
+            // All date operations use LOCAL time components exclusively
+            // (getFullYear / getMonth / getDate). No toISOString, no UTC.
+            // Dates are constructed at local NOON to avoid DST midnight edge
+            // cases where midnight may not exist or may jump a day.
+
             function getTodayDate(format) {
                 const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                const monthShort = MONTHS_SHORT[now.getMonth()];
-                const dayNum = now.getDate();
-
-                const formats = {
-                    'DD.MM.YYYY': `${day}.${month}.${year}`,
-                    'MM.DD.YYYY': `${month}.${day}.${year}`,
-                    'YYYY-MM-DD': `${year}-${month}-${day}`,
-                    'DD/MM/YYYY': `${day}/${month}/${year}`,
-                    'MM/DD/YYYY': `${month}/${day}/${year}`,
-                    'YYYY/MM/DD': `${year}/${month}/${day}`,
-                    'DD MMM': `${dayNum} ${monthShort}`,
-                    'MMM DD': `${monthShort} ${dayNum}`
-                };
-                return formats[format] || formats['DD.MM.YYYY'];
+                return formatDateFromParts(
+                    now.getDate(),
+                    now.getMonth() + 1,
+                    now.getFullYear(),
+                    format
+                );
             }
 
             function formatDateFromParts(day, month, year, format) {
                 const monthNum = String(month).padStart(2, '0');
                 const dayNum = String(day).padStart(2, '0');
                 const monthShort = MONTHS_SHORT[month - 1];
+                const dayStr = String(day);
 
                 const formats = {
                     'DD.MM.YYYY': `${dayNum}.${monthNum}.${year}`,
@@ -1114,48 +1110,121 @@
                     'DD/MM/YYYY': `${dayNum}/${monthNum}/${year}`,
                     'MM/DD/YYYY': `${monthNum}/${dayNum}/${year}`,
                     'YYYY/MM/DD': `${year}/${monthNum}/${dayNum}`,
-                    'DD MMM': `${day} ${monthShort}`,
-                    'MMM DD': `${monthShort} ${day}`
+                    'DD MMM': `${dayStr} ${monthShort}`,
+                    'MMM DD': `${monthShort} ${dayStr}`
                 };
                 return formats[format] || formats['DD.MM.YYYY'];
+            }
+
+            // Format-aware parser: knows whether the current format is
+            // day-first or month-first, so DD.MM and MM.DD are not confused.
+            function parseDate(str, format) {
+                if (!str) return null;
+                str = str.trim();
+                const fmt = format || 'DD.MM.YYYY';
+
+                // --- Numeric formats ---
+                const numericRegexes = {
+                    'DD.MM.YYYY': /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/,
+                    'MM.DD.YYYY': /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/,
+                    'YYYY-MM-DD': /^(\d{4})-(\d{1,2})-(\d{1,2})$/,
+                    'DD/MM/YYYY': /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/,
+                    'MM/DD/YYYY': /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/,
+                    'YYYY/MM/DD': /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/
+                };
+
+                const re = numericRegexes[fmt];
+                if (re) {
+                    const m = str.match(re);
+                    if (m) {
+                        let day, month, year;
+                        if (fmt === 'YYYY-MM-DD' || fmt === 'YYYY/MM/DD') {
+                            year = parseInt(m[1], 10);
+                            month = parseInt(m[2], 10);
+                            day = parseInt(m[3], 10);
+                        } else if (fmt === 'MM.DD.YYYY' || fmt === 'MM/DD/YYYY') {
+                            month = parseInt(m[1], 10);
+                            day = parseInt(m[2], 10);
+                            year = parseInt(m[3], 10);
+                        } else {
+                            // DD.MM.YYYY or DD/MM/YYYY
+                            day = parseInt(m[1], 10);
+                            month = parseInt(m[2], 10);
+                            year = parseInt(m[3], 10);
+                        }
+                        return buildLocalDate(year, month, day);
+                    }
+                }
+
+                // --- Short-month formats (DD MMM / MMM DD) ---
+                let m = str.match(/^(\d{1,2})\s+([A-Za-z]{3})$/);
+                if (m) {
+                    const monthIndex = MONTHS_SHORT.findIndex(
+                        s => s.toLowerCase() === m[2].toLowerCase()
+                    );
+                    if (monthIndex !== -1) {
+                        return buildLocalDate(
+                            new Date().getFullYear(),
+                            monthIndex + 1,
+                            parseInt(m[1], 10)
+                        );
+                    }
+                }
+                m = str.match(/^([A-Za-z]{3})\s+(\d{1,2})$/);
+                if (m) {
+                    const monthIndex = MONTHS_SHORT.findIndex(
+                        s => s.toLowerCase() === m[1].toLowerCase()
+                    );
+                    if (monthIndex !== -1) {
+                        return buildLocalDate(
+                            new Date().getFullYear(),
+                            monthIndex + 1,
+                            parseInt(m[2], 10)
+                        );
+                    }
+                }
+
+                return null;
+            }
+
+            // Builds a local Date at 12:00 (noon) and validates the round-trip.
+            // Noon avoids DST transitions (which typically occur near midnight
+            // or 2–3 AM) from shifting the calendar day.
+            function buildLocalDate(year, month, day) {
+                if (!year || !month || !day) return null;
+                if (month < 1 || month > 12) return null;
+                if (day < 1 || day > 31) return null;
+                const d = new Date(year, month - 1, day, 12, 0, 0, 0);
+                if (
+                    d.getFullYear() === year &&
+                    d.getMonth() === month - 1 &&
+                    d.getDate() === day
+                ) {
+                    return d;
+                }
+                return null;
             }
 
             function formatDate() {
                 const format = document.getElementById('dateFormat').value;
                 const dateInput = document.getElementById('tagDate');
-                if (dateInput.value === '') {
+                if (dateInput.value.trim() === '') {
                     dateInput.value = getTodayDate(format);
                 } else {
-                    const parsed = parseDate(dateInput.value);
+                    const parsed = parseDate(dateInput.value, format);
                     if (parsed) {
-                        const year = parsed.getFullYear();
-                        const month = parsed.getMonth() + 1;
-                        const day = parsed.getDate();
-                        dateInput.value = formatDateFromParts(day, month, year, format);
+                        dateInput.value = formatDateFromParts(
+                            parsed.getDate(),
+                            parsed.getMonth() + 1,
+                            parsed.getFullYear(),
+                            format
+                        );
                     } else {
                         dateInput.value = getTodayDate(format);
                     }
                 }
                 updatePost();
                 saveToStorage();
-            }
-
-            function parseDate(str) {
-                let parts = str.match(/^(\d{2})[.\/](\d{2})[.\/](\d{4})$/);
-                if (parts) return new Date(parts[3], parts[2] - 1, parts[1]);
-                parts = str.match(/^(\d{4})[-/](\d{2})[-/](\d{2})$/);
-                if (parts) return new Date(parts[1], parts[2] - 1, parts[3]);
-                parts = str.match(/^(\d{1,2}) ([A-Za-z]{3})$/);
-                if (parts) {
-                    const monthIndex = MONTHS_SHORT.indexOf(parts[2]);
-                    if (monthIndex !== -1) return new Date(new Date().getFullYear(), monthIndex, parseInt(parts[1]));
-                }
-                parts = str.match(/^([A-Za-z]{3}) (\d{1,2})$/);
-                if (parts) {
-                    const monthIndex = MONTHS_SHORT.indexOf(parts[1]);
-                    if (monthIndex !== -1) return new Date(new Date().getFullYear(), monthIndex, parseInt(parts[2]));
-                }
-                return null;
             }
 
             function saveToStorage() {
